@@ -439,85 +439,118 @@
   }
 
   /* ── Results ───────────────────────────────────────────── */
+  /* ── Results: aftertax.gr-style year/month side-by-side ── */
   .results {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px 28px;
-  }
-  .results .line {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    padding: 10px 4px;
-    border-bottom: 1px dashed var(--line-strong);
-    font-size: var(--fs-body);
-  }
-  .results .line span:first-child {
-    color: var(--ink-soft);
-    font-weight: var(--fw-medium);
-  }
-  .results .line span:last-child {
-    color: var(--ink);
-    font-weight: var(--fw-medium);
-    white-space: nowrap;
-  }
-
-  /* "Big" intermediate lines — φορολογητέο εισόδημα, σύνολο προς εφορία.
-     Bumped slightly but kept clearly subordinate to the .net climax. */
-  .results .line.big {
-    font-weight: var(--fw-bold);
-    border-bottom: 2px solid var(--ink);
-    padding-top: 14px;
-    font-size: var(--fs-lead);
-  }
-  .results .line.big span:first-child {
-    color: var(--ink);
-    font-weight: var(--fw-bold);
-    text-transform: none;
-    letter-spacing: 0;
-  }
-  .results .line.big span:last-child {
-    font-weight: var(--fw-bold);
-  }
-
-  /* ── The hero "Καθαρά" treatment ─────────────────────────
-     Stacked layout: small-caps eyebrow on top, oversized tabular number below.
-     Both year + month cards span full width as a stacked pair so they read
-     as ONE unit, the climax of the page. The € sign is glued to the number. */
-  .results .line.net {
-    background: linear-gradient(135deg, #e6f6ec 0%, #d2efde 100%);
-    border: 1px solid #b9e3c9;
-    border-radius: 16px;
-    padding: 18px 22px;
-    margin-top: 12px;
-    color: var(--mint-deep);
-    box-shadow: 0 8px 22px rgba(47, 157, 107, 0.12);
-    grid-column: span 1;
-    /* Switch from row layout (label left / value right) to stacked
-       eyebrow-over-amount, which lets the number be much bigger without
-       fighting horizontal space. */
     flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    border-bottom: none;
+    gap: 0;
   }
-  .results .line.net span:first-child {
-    color: #1f7a52;
+  .rr {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .rr:last-child { border-bottom: none; }
+  .rr-label {
     font-weight: var(--fw-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--ls-eyebrow);
-    font-size: var(--fs-eyebrow);
-    line-height: 1;
+    font-size: var(--fs-body);
+    color: var(--ink);
+    line-height: 1.3;
   }
-  .results .line.net span:last-child {
-    color: var(--mint-deep);
-    font-size: var(--fs-hero);
-    font-weight: var(--fw-black);
-    letter-spacing: var(--ls-hero);
-    line-height: 1.05;
-    /* € stays married to the number — never wraps to its own line */
+  .rr-pill {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: center;
+    background: rgba(0,0,0,0.04);
+    border-radius: 999px;
+    padding: 7px 14px 7px 12px;
+    transition: background 0.15s ease;
+  }
+  .rr-key {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: var(--ink-soft);
+    font-weight: var(--fw-bold);
+  }
+  .rr-val {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    font-weight: var(--fw-bold);
+    font-size: 14px;
+    color: var(--ink);
     white-space: nowrap;
+  }
+
+  /* Sub-rows — strip the pill so they read as supporting detail, not milestones */
+  .rr.sub .rr-label {
+    font-weight: var(--fw-medium);
+    color: var(--ink-soft);
+    font-size: var(--fs-secondary);
+    padding-left: 14px;
+  }
+  .rr.sub .rr-pill {
+    background: transparent;
+    padding: 7px 14px 7px 4px;
+  }
+
+  /* Φορολογητέο — second tier; pill but with thin border to distinguish */
+  .rr.tier2 .rr-pill {
+    background: #fff;
+    border: 1px solid var(--line-strong);
+  }
+
+  /* Hero — Καθαρά. Mint background on first pill, full-fill mint-deep on second
+     ("Ανά μήνα" — the number people actually live by). */
+  .rr.hero {
+    border-top: 2px solid var(--ink);
+    border-bottom: none;
+    padding: 20px 0 4px;
+    margin-top: 12px;
+  }
+  .rr.hero .rr-label {
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-black);
+  }
+  .rr.hero .rr-pill {
+    background: var(--mint);
+    border: 1px solid var(--mint-deep);
+    padding: 10px 18px 10px 14px;
+  }
+  .rr.hero .rr-pill .rr-key { color: #1f7a52; }
+  .rr.hero .rr-pill .rr-val {
+    color: var(--mint-deep);
+    font-size: 17px;
+  }
+  .rr.hero .rr-pill:last-child {
+    background: var(--mint-deep);
+    border-color: var(--mint-deep);
+    box-shadow: 0 6px 18px rgba(31, 122, 82, 0.20);
+  }
+  .rr.hero .rr-pill:last-child .rr-key {
+    color: rgba(255,255,255,0.85);
+  }
+  .rr.hero .rr-pill:last-child .rr-val {
+    color: #fff;
+    font-size: 18px;
+  }
+
+  /* Mobile: stack label above the pill pair */
+  @media (max-width: 560px) {
+    .rr {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 12px 0;
+    }
+    .rr-label { grid-column: 1 / -1; }
+    .rr.sub .rr-label { padding-left: 0; }
+    .rr.hero .rr-pill .rr-val { font-size: 16px; }
+    .rr.hero .rr-pill:last-child .rr-val { font-size: 17px; }
   }
 
   /* ── Pie chart — refined hero treatment ────────────────── */
@@ -1210,16 +1243,35 @@ function recompute() {
   else            hint = "Κανονικοί συντελεστές, προκαταβολή 55%.";
   document.getElementById("years-hint").textContent = hint;
 
-  document.getElementById("results").innerHTML = `
-    <div class="line"><span>Σύνολο εσόδων (έτος)</span><span>${fmt(grossIncome)}</span></div>
-    <div class="line"><span>Σύνολο εξόδων (έτος)</span><span>−${fmt(yearlyExpenses)}</span></div>
-    <div class="line big"><span>Φορολογητέο εισόδημα</span><span>${fmt(taxable)}</span></div>
-    <div class="line"><span>Φόρος εισοδήματος</span><span>−${fmt(tax)}</span></div>
-    <div class="line"><span>Προκαταβολή φόρου (${prokatavoliPct})</span><span>−${fmt(prokatavoli)}</span></div>
-    <div class="line big"><span>Σύνολο προς εφορία</span><span>${fmt(totalToPay)}</span></div>
-    <div class="line net"><span>Καθαρά (έτος)</span><span>${fmt(netYearly)}</span></div>
-    <div class="line net"><span>Καθαρά (μήνας)</span><span>${fmt(netMonthly)}</span></div>
-  `;
+  // Results: aftertax.gr-style cascade — main metrics in pills, sub-deductions
+  // as plain text, hero "Καθαρά" with mint accent and "Ανά μήνα" filled.
+  const rows = [
+    { kind: "main",  label: "Σύνολο εσόδων",                          year:  grossIncome },
+    { kind: "sub",   label: "Λοιπά έξοδα",                            year: -otherExpensesYearly },
+    { kind: "sub",   label: "Ασφαλιστικές εισφορές (e-ΕΦΚΑ)",          year: -efkaYear },
+    { kind: "tier2", label: "Φορολογητέο εισόδημα",                    year:  taxable },
+    { kind: "sub",   label: "Φόρος εισοδήματος",                       year: -tax },
+    { kind: "sub",   label: `Προκαταβολή φόρου (${prokatavoliPct})`,   year: -prokatavoli },
+    { kind: "hero",  label: "Καθαρό εισόδημα",                         year:  netYearly },
+  ];
+  document.getElementById("results").innerHTML = rows.map(r => {
+    const sign = r.year < 0 ? "−" : "";
+    const yearAbs  = Math.abs(r.year);
+    const monthAbs = yearAbs / 12;
+    return `
+      <div class="rr ${r.kind}">
+        <div class="rr-label">${r.label}</div>
+        <div class="rr-pill">
+          <span class="rr-key">Ανά έτος</span>
+          <span class="rr-val">${sign}${fmt(yearAbs)}</span>
+        </div>
+        <div class="rr-pill">
+          <span class="rr-key">Ανά μήνα</span>
+          <span class="rr-val">${sign}${fmt(monthAbs)}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
 
   document.getElementById("expense-sum-month").textContent = fmt(otherExpensesYearly / 12);
   document.getElementById("expense-sum-year").textContent  = fmt(otherExpensesYearly);
