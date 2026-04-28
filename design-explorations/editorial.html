@@ -3,507 +3,450 @@
 <head>
 <meta charset="UTF-8">
 <title>Φόροι Ελ. Επαγγελματία 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 <style>
   :root {
-    /* Soft modern fintech palette */
-    --cream:        #fdf8f1;   /* page background base */
-    --cream-deep:   #f7ecdb;   /* gradient stop */
-    --peach:        #ffd9c2;   /* income card tint */
-    --mint:         #c9ecd8;   /* net / positive */
-    --mint-deep:    #2f9d6b;   /* net text */
-    --lilac:        #e3dcfb;   /* efka card tint */
-    --lilac-deep:   #7d6ce0;   /* efka accent */
-    --coral:        #ff7e6b;   /* delete / warn */
-    --coral-soft:   #ffd6cf;
-    --butter:       #ffe6a8;   /* expenses card tint */
-    --butter-deep:  #c98a1f;
-    --sky:          #c6e2f7;   /* settings card tint */
-    --sky-deep:     #2f7bd0;
-
-    --panel:        #ffffff;
-    --panel-soft:   #fffaf3;
-    --ink:          #2a2235;   /* warm near-black */
-    --ink-soft:     #5a5168;
-    --muted:        #8a8197;
-    --line:         #f0e7dc;   /* warm divider */
-    --line-strong:  #e3d6c4;
-
-    --shadow-sm: 0 1px 2px rgba(82, 60, 40, 0.04), 0 2px 6px rgba(82, 60, 40, 0.05);
-    --shadow-md: 0 4px 14px rgba(82, 60, 40, 0.06), 0 10px 28px rgba(82, 60, 40, 0.06);
-    --shadow-lg: 0 10px 30px rgba(82, 60, 40, 0.10), 0 30px 60px rgba(82, 60, 40, 0.08);
-
-    --radius-sm: 10px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
-    --radius-xl: 28px;
-
-    /* JS-referenced palette equivalents (kept for parity with original CSS variables) */
-    --bg: var(--cream);
-    --border: var(--line);
-    --text: var(--ink);
-    --accent: var(--lilac-deep);
-    --good: var(--mint-deep);
-    --bad: var(--coral);
+    --bg:        #fafaf9;
+    --panel:     #ffffff;
+    --border:    #ebebe7;
+    --hairline:  #f0f0ec;
+    --text:      #0e0e0c;
+    --muted:     #6f6f68;
+    --faint:     #a3a39c;
+    --accent:    #c2410c;   /* burnt sienna — the single accent */
+    --accent-soft: #fdf3ee;
+    --good:      #0e0e0c;   /* net amounts use ink, not green — accent does the lifting */
+    --bad:       #0e0e0c;
+    --warn:      #8a5a00;
   }
-
   * { box-sizing: border-box; }
-
-  html, body { height: 100%; }
-
-  body {
-    font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
-    color: var(--ink);
-    margin: 0;
-    padding: 32px 20px 80px;
-    max-width: 940px;
-    margin-inline: auto;
-    background:
-      radial-gradient(1100px 600px at 8% -10%,  #ffe2c8 0%, transparent 60%),
-      radial-gradient(900px  500px at 100% 0%,  #e8def9 0%, transparent 55%),
-      radial-gradient(800px  500px at 50% 110%, #d6f0e1 0%, transparent 60%),
-      linear-gradient(180deg, var(--cream) 0%, var(--cream-deep) 100%);
-      background-attachment: fixed;
-    font-feature-settings: "ss01", "cv11";
-    -webkit-font-smoothing: antialiased;
+  html { font-feature-settings: "ss01", "cv11"; }
+  @supports (font-variation-settings: normal) {
+    html { font-family: "Inter var", Inter, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; }
   }
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 64px 24px 96px;
+    max-width: 760px;
+    margin-inline: auto;
+    font-size: 14px;
+    line-height: 1.55;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection { background: var(--accent-soft); color: var(--accent); }
 
+  /* ── Masthead ───────────────────────────────────────────── */
+  header.masthead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 28px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--border);
+  }
   h1 {
-    font-size: 30px;
-    font-weight: 800;
+    font-size: 22px;
+    font-weight: 600;
     letter-spacing: -0.02em;
-    margin: 4px 0 6px;
+    margin: 0;
+    line-height: 1.2;
   }
   .sub {
-    color: var(--ink-soft);
-    font-size: 14px;
-    margin-bottom: 28px;
-    max-width: 640px;
+    color: var(--muted);
+    font-size: 12.5px;
+    margin: 0;
+    text-align: right;
+    max-width: 280px;
   }
 
-  /* ── Cards ─────────────────────────────────────────────── */
+  /* ── Sections as editorial spreads ──────────────────────── */
   section {
-    position: relative;
-    background: var(--panel);
-    border: 1px solid rgba(255,255,255,0.7);
-    border-radius: var(--radius-lg);
-    padding: 22px 24px;
-    margin-bottom: 18px;
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin-bottom: 56px;
   }
-  /* Soft tinted top wash on every card, color varies per section */
-  section::before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 92px;
-    background: linear-gradient(180deg, var(--card-tint, #f5eee2) 0%, transparent 100%);
-    opacity: 0.9;
-    pointer-events: none;
-    z-index: 0;
-  }
-  section > * { position: relative; z-index: 1; }
-
-  /* Per-section accent tints */
-  section.income    { --card-tint: var(--peach); }
-  section.efka      { --card-tint: var(--lilac); }
-  section.expenses  { --card-tint: var(--butter); }
-  section.settings  { --card-tint: var(--sky); }
-  section.results   { --card-tint: #d8eee3; }
-  section.pie-card  { --card-tint: #f3e3d2; }
-
   section h2 {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-    font-weight: 700;
-    margin: 0 0 16px;
+    font-size: 10.5px;
+    font-weight: 600;
+    margin: 0 0 20px;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--ink-soft);
+    letter-spacing: 0.16em;
+    color: var(--faint);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
   }
-  section h2::before {
-    content: "";
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--card-dot, var(--lilac-deep));
-    box-shadow: 0 0 0 4px rgba(255,255,255,0.7);
-  }
-  section.income    h2::before { background: #ff8b5a; }
-  section.efka      h2::before { background: var(--lilac-deep); }
-  section.expenses  h2::before { background: var(--butter-deep); }
-  section.settings  h2::before { background: var(--sky-deep); }
-  section.results   h2::before { background: var(--mint-deep); }
-  section.pie-card  h2::before { background: #c97f3a; }
 
-  /* ── Rows ──────────────────────────────────────────────── */
+  /* ── Rows ───────────────────────────────────────────────── */
   .row {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr auto;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 4px;
     align-items: center;
   }
   .row.expense { grid-template-columns: 2fr 1fr 0.6fr 1fr auto; }
 
-  .net-display {
-    color: var(--ink-soft);
+  .net-display,
+  .total {
+    color: var(--muted);
     font-size: 13px;
     text-align: right;
-    padding-right: 6px;
+    padding-right: 4px;
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
   }
 
-  input[type="text"], input[type="number"] {
+  input[type="text"],
+  input[type="number"] {
     width: 100%;
-    padding: 11px 13px;
-    border: 1px solid var(--line-strong);
-    border-radius: 12px;
+    padding: 8px 0;
+    border: 0;
+    border-bottom: 1px solid var(--hairline);
+    border-radius: 0;
     font: inherit;
-    font-weight: 500;
-    background: var(--panel-soft);
-    color: var(--ink);
-    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    font-variant-numeric: tabular-nums;
+    background: transparent;
+    color: var(--text);
+    transition: border-color 120ms ease;
   }
-  input[type="number"] { font-variant-numeric: tabular-nums; }
-  input::placeholder { color: var(--muted); }
+  input[type="number"] { text-align: right; padding-right: 4px; }
+  input::placeholder { color: var(--faint); }
+  input:hover { border-bottom-color: #d8d8d2; }
   input:focus {
     outline: none;
-    border-color: var(--lilac-deep);
-    background: #fff;
-    box-shadow: 0 0 0 4px rgba(125, 108, 224, 0.15);
+    border-bottom-color: var(--accent);
+    background: transparent;
   }
 
-  .total {
-    color: var(--ink);
-    font-size: 14px;
-    font-weight: 600;
-    text-align: right;
-    padding-right: 6px;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* ── Buttons ───────────────────────────────────────────── */
+  /* ── Buttons ────────────────────────────────────────────── */
   button {
-    border: 1px solid var(--line-strong);
-    background: #fff;
-    padding: 9px 14px;
-    border-radius: 999px;
+    border: 0;
+    background: transparent;
+    padding: 6px 0;
     cursor: pointer;
     font: inherit;
-    font-weight: 600;
-    color: var(--ink);
-    transition: transform .08s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
-    box-shadow: var(--shadow-sm);
+    color: var(--muted);
+    transition: color 120ms ease;
   }
-  button:hover { background: var(--panel-soft); transform: translateY(-1px); }
-  button:active { transform: translateY(0); }
-
+  button:hover { color: var(--text); }
   button.add {
-    color: #fff;
-    background: linear-gradient(180deg, #8a78ec 0%, #6a59d6 100%);
-    border-color: transparent;
-    margin-top: 12px;
-    padding: 10px 18px;
-    box-shadow: 0 6px 16px rgba(106, 89, 214, 0.30);
+    color: var(--accent);
+    margin-top: 18px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
   }
-  button.add:hover { filter: brightness(1.05); }
-
+  button.add:hover { color: #9a3409; }
   button.del {
-    color: var(--coral);
-    border-color: var(--coral-soft);
-    background: #fff;
-    padding: 6px 11px;
-    border-radius: 999px;
+    color: var(--faint);
+    font-size: 18px;
     line-height: 1;
-    font-size: 16px;
-    box-shadow: none;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border-radius: 50%;
   }
-  button.del:hover { background: #fff3f0; }
+  button.del:hover { color: var(--accent); background: var(--accent-soft); }
 
-  /* ── Settings ──────────────────────────────────────────── */
+  /* ── Settings ───────────────────────────────────────────── */
   .settings {
     display: flex;
-    gap: 18px;
+    gap: 20px;
     align-items: center;
     flex-wrap: wrap;
   }
-  .settings label { font-size: 14px; font-weight: 600; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 10px; }
-  .settings input { width: 100px; }
-
-  .reset-btn {
-    color: var(--coral);
-    border-color: var(--coral-soft);
-    background: #fff;
-    margin-left: auto;
+  .settings label {
+    font-size: 13px;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
-  .reset-btn:hover { background: #fff3f0; }
+  .settings input { width: 64px; text-align: right; }
+  .reset-btn {
+    color: var(--muted);
+    margin-left: auto;
+    font-size: 12.5px;
+    text-decoration: underline;
+    text-decoration-color: var(--hairline);
+    text-underline-offset: 4px;
+  }
+  .reset-btn:hover { color: var(--accent); text-decoration-color: var(--accent); }
 
-  /* ── Header rows + sum rows ────────────────────────────── */
+  /* ── Header rows ────────────────────────────────────────── */
   .header-row {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr auto;
-    gap: 10px;
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 8px;
-    padding: 0 6px;
+    gap: 12px;
+    font-size: 10.5px;
+    color: var(--faint);
+    margin-bottom: 6px;
+    padding: 0 0 2px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
+    letter-spacing: 0.12em;
+    font-weight: 500;
   }
   .header-row.expense { grid-template-columns: 2fr 1fr 0.6fr 1fr auto; }
+  .header-row > div:nth-child(2),
+  .header-row > div:nth-child(3),
+  .header-row > div:nth-child(4) { text-align: right; padding-right: 4px; }
 
+  /* ── Sum rows ───────────────────────────────────────────── */
   .sum-row {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr auto;
-    gap: 10px;
-    padding: 14px 8px 6px;
-    margin-top: 10px;
-    border-top: 1px dashed var(--line-strong);
-    font-weight: 700;
-    font-size: 14px;
+    gap: 12px;
+    padding: 14px 0 2px;
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    align-items: baseline;
   }
   .sum-row.expense { grid-template-columns: 2fr 1fr 0.6fr 1fr auto; }
   .sum-row.expense .label { grid-column: 1 / 3; }
   .sum-row .label {
-    color: var(--ink-soft);
+    color: var(--faint);
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10.5px;
+    font-weight: 500;
     align-self: center;
   }
   .sum-row.income .label { grid-column: 1 / 4; }
   .sum-row .amount {
     text-align: right;
-    padding-right: 6px;
+    padding-right: 4px;
     font-variant-numeric: tabular-nums;
-    color: var(--ink);
+    font-weight: 500;
+    color: var(--text);
   }
 
-  /* ── EFKA ──────────────────────────────────────────────── */
+  /* ── EFKA ───────────────────────────────────────────────── */
   .efka {
-    display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
-    margin-bottom: 10px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
   }
-  .efka label { font-size: 14px; font-weight: 600; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 10px; }
-  .efka select, .efka input {
-    padding: 11px 13px;
-    border: 1px solid var(--line-strong);
-    border-radius: 12px;
+  .efka label {
+    font-size: 13px;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .efka select,
+  .efka input {
+    padding: 6px 0;
+    border: 0;
+    border-bottom: 1px solid var(--hairline);
+    border-radius: 0;
     font: inherit;
-    font-weight: 500;
-    background: var(--panel-soft);
-    color: var(--ink);
-  }
-  .efka select {
+    background: transparent;
+    color: var(--text);
     appearance: none;
     -webkit-appearance: none;
-    padding-right: 36px;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='none' stroke='%237d6ce0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M1 1l5 5 5-5'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='none' stroke='%236f6f68' stroke-width='1.2' d='M1 1l4 4 4-4'/></svg>");
     background-repeat: no-repeat;
-    background-position: right 14px center;
+    background-position: right 2px center;
+    padding-right: 18px;
   }
-  .efka select:focus, .efka input:focus {
-    outline: none;
-    border-color: var(--lilac-deep);
-    background-color: #fff;
-    box-shadow: 0 0 0 4px rgba(125, 108, 224, 0.15);
-  }
+  .efka input { background-image: none; padding-right: 4px; text-align: right; width: 110px; }
+  .efka select:focus,
+  .efka input:focus { outline: none; border-bottom-color: var(--accent); }
+
   .efka-summary {
-    font-weight: 700;
-    padding: 14px 8px 6px;
-    margin-top: 10px;
-    border-top: 1px dashed var(--line-strong);
+    padding: 14px 0 2px;
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    font-variant-numeric: tabular-nums;
+    align-items: baseline;
+    font-size: 13px;
   }
   .efka-summary .label {
-    color: var(--ink-soft);
+    color: var(--faint);
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10.5px;
+    font-weight: 500;
   }
+  .efka-summary > span:last-child { font-variant-numeric: tabular-nums; font-weight: 500; }
   .efka-warn {
-    color: #a8530b;
-    background: #fff3df;
-    border: 1px solid #f3d9a3;
-    border-radius: 12px;
-    font-size: 13px;
-    padding: 10px 14px;
+    color: var(--warn);
+    font-size: 12px;
     margin-top: 8px;
-    font-weight: 600;
+    padding-left: 12px;
+    border-left: 2px solid #e8c989;
+    line-height: 1.45;
   }
   .efka-warn:empty { display: none; }
 
   .hint {
-    color: var(--ink-soft);
+    color: var(--muted);
     font-size: 12px;
     margin-top: 10px;
     line-height: 1.5;
   }
+  .efka .hint { margin-top: 0; }
 
-  /* ── Results ───────────────────────────────────────────── */
+  /* ── Results — the editorial heart ──────────────────────── */
   .results {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px 28px;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
   .results .line {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 10px 4px;
-    border-bottom: 1px dashed var(--line-strong);
+    align-items: baseline;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--hairline);
     font-size: 14px;
+  }
+  .results .line > span:first-child { color: var(--muted); }
+  .results .line > span:last-child {
     font-variant-numeric: tabular-nums;
+    color: var(--text);
   }
-  .results .line span:first-child { color: var(--ink-soft); font-weight: 500; }
-  .results .line span:last-child  { color: var(--ink); font-weight: 600; }
   .results .line.big {
-    font-weight: 700;
-    border-bottom: 2px solid var(--ink);
-    padding-top: 14px;
-    font-size: 15px;
+    font-size: 14px;
+    padding-top: 18px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
   }
-  .results .line.big span:first-child { color: var(--ink); font-weight: 700; }
-
-  /* The hero "καθαρά" treatment — celebratory, framed, warm green */
-  .results .line.net {
-    background: linear-gradient(135deg, #e6f6ec 0%, #d2efde 100%);
-    border: 1px solid #b9e3c9;
-    border-radius: 16px;
-    padding: 16px 18px;
-    margin-top: 10px;
-    color: var(--mint-deep);
-    font-weight: 800;
-    font-size: 18px;
-    box-shadow: 0 6px 18px rgba(47, 157, 107, 0.10);
-    grid-column: span 1;
-  }
-  .results .line.net span:first-child {
-    color: #1f7a52;
-    font-weight: 700;
+  .results .line.big > span:first-child {
+    color: var(--text);
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     font-size: 11px;
   }
-  .results .line.net span:last-child {
-    color: var(--mint-deep);
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+  .results .line.big > span:last-child { font-weight: 500; }
+
+  /* The bottom-line "Καθαρά" lines — numbers as the hero. */
+  .results .line.net {
+    border-bottom: 0;
+    padding: 6px 0;
+  }
+  .results .line.net:first-of-type {
+    margin-top: 28px;
+    padding-top: 4px;
+  }
+  .results .line.net > span:first-child {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+    align-self: flex-end;
+    padding-bottom: 6px;
+  }
+  .results .line.net > span:last-child {
+    font-size: 38px;
+    font-weight: 300;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .results .line.net + .line.net > span:last-child {
+    font-size: 56px;
+    color: var(--accent);
+    font-weight: 300;
   }
 
-  /* ── Pie chart (the centerpiece) ───────────────────────── */
+  /* ── Pie chart ──────────────────────────────────────────── */
   .pie-wrap {
     display: flex;
-    gap: 36px;
+    gap: 48px;
     align-items: center;
     flex-wrap: wrap;
-    padding: 8px 4px 4px;
   }
   .pie {
-    --pie-size: 280px;
-    width: var(--pie-size);
-    height: var(--pie-size);
+    width: 168px;
+    height: 168px;
     border-radius: 50%;
-    background: conic-gradient(#e3e3df 0% 100%);
+    background: conic-gradient(var(--hairline) 0% 100%);
     flex-shrink: 0;
     position: relative;
-    /* Soft drop shadow + inner highlight */
-    box-shadow:
-      0 18px 40px rgba(82, 60, 40, 0.18),
-      0 6px 16px rgba(82, 60, 40, 0.10),
-      inset 0 0 0 1px rgba(255,255,255,0.5);
-    isolation: isolate;
   }
-  /* Inner donut hole: a clean cream disc that turns the pie into a donut */
   .pie::after {
+    /* donut ring — quietly editorial */
     content: "";
     position: absolute;
-    inset: 22%;
+    inset: 28px;
+    background: var(--bg);
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fdf6ea 70%, #f5e9d4 100%);
-    box-shadow:
-      inset 0 4px 10px rgba(82, 60, 40, 0.08),
-      0 1px 2px rgba(255,255,255,0.6);
   }
-  /* Subtle highlight on the rim */
-  .pie::before {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    border-radius: 50%;
-    background: conic-gradient(from 90deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.25));
-    pointer-events: none;
-    mix-blend-mode: overlay;
-  }
-
   .pie-legend {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0;
     flex: 1;
     min-width: 280px;
   }
   .pie-legend .item {
     display: grid;
-    grid-template-columns: 14px 1fr auto auto;
-    align-items: center;
-    gap: 12px;
-    font-size: 14px;
-    padding: 10px 12px;
-    border-bottom: 1px dashed var(--line-strong);
-    border-radius: 10px;
-    transition: background .15s ease;
+    grid-template-columns: 10px 1fr auto auto;
+    align-items: baseline;
+    gap: 14px;
+    font-size: 13px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--hairline);
   }
-  .pie-legend .item:hover { background: rgba(255,255,255,0.55); }
-  .pie-legend .item:last-child { border-bottom: none; }
+  .pie-legend .item:last-child { border-bottom: 0; }
   .pie-legend .swatch {
-    width: 14px; height: 14px;
-    border-radius: 5px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(255,255,255,0.4);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    align-self: center;
   }
-  .pie-legend .label { color: var(--ink); font-weight: 600; }
+  .pie-legend .label { color: var(--muted); }
   .pie-legend .amount {
     font-variant-numeric: tabular-nums;
-    color: var(--ink);
-    font-weight: 600;
+    color: var(--text);
+    font-weight: 500;
   }
   .pie-legend .pct {
-    color: var(--ink-soft);
-    width: 60px;
+    color: var(--faint);
+    width: 52px;
     text-align: right;
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
-    font-size: 13px;
+    font-size: 12px;
   }
 
+  /* ── Responsive ─────────────────────────────────────────── */
   @media (max-width: 640px) {
-    body { padding: 20px 14px 60px; }
-    h1 { font-size: 24px; }
-    section { padding: 18px 16px; border-radius: var(--radius-md); }
-    .results { grid-template-columns: 1fr; }
-    .pie { --pie-size: 220px; }
+    body { padding: 32px 18px 64px; }
+    header.masthead { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .sub { text-align: left; }
+    .results .line.net + .line.net > span:last-child { font-size: 40px; }
+    .results .line.net > span:last-child { font-size: 28px; }
+    .row { grid-template-columns: 1.4fr 0.8fr 0.8fr 0.9fr auto; gap: 8px; }
+    .row.expense { grid-template-columns: 1.4fr 0.9fr 0.5fr 0.9fr auto; }
+    .header-row { grid-template-columns: 1.4fr 0.8fr 0.8fr 0.9fr auto; gap: 8px; }
+    .header-row.expense { grid-template-columns: 1.4fr 0.9fr 0.5fr 0.9fr auto; }
   }
 </style>
 </head>
 <body>
 
-<h1>Φόροι Ελ. Επαγγελματία 2026</h1>
-<div class="sub">Υπολογισμός καθαρού εισοδήματος — τοπικό, κανένα δεδομένο δεν φεύγει από το browser.</div>
+<header class="masthead">
+  <h1>Φόροι Ελ. Επαγγελματία 2026</h1>
+  <p class="sub">Υπολογισμός καθαρού εισοδήματος. Τοπικό — κανένα δεδομένο δεν φεύγει από το browser.</p>
+</header>
 
-<section class="income">
+<section>
   <h2>Έσοδα</h2>
   <div class="header-row">
     <div>Πηγή</div><div>€ / ώρα</div><div>Ώρες</div><div>Σύνολο</div><div></div>
@@ -517,7 +460,7 @@
   <button class="add" onclick="addIncome()">+ Νέα πηγή</button>
 </section>
 
-<section class="efka">
+<section>
   <h2>Ασφαλιστικές εισφορές (e-ΕΦΚΑ)</h2>
   <div class="efka">
     <label>Κατηγορία:
@@ -535,7 +478,7 @@
   </div>
 </section>
 
-<section class="expenses">
+<section>
   <h2>Λοιπά έξοδα (μηνιαία)</h2>
   <div class="header-row expense">
     <div>Περιγραφή</div><div>€ / μήνα (μικτά)</div><div>ΦΠΑ %</div><div>Εκπιπτόμενο</div><div></div>
@@ -552,7 +495,7 @@
   <div class="hint">Π.χ. εισφορές e-ΕΦΚΑ, λογιστής, ενοίκιο επαγγ. χώρου. Αφαιρούνται από το εισόδημα πριν τη φορολόγηση.</div>
 </section>
 
-<section class="settings">
+<section>
   <h2>Ρυθμίσεις</h2>
   <div class="settings">
     <label>Έτη δραστηριότητας: <input type="number" id="years" min="1" value="1" oninput="recompute()"></label>
@@ -561,12 +504,12 @@
   </div>
 </section>
 
-<section class="results">
+<section>
   <h2>Αποτελέσματα</h2>
   <div class="results" id="results"></div>
 </section>
 
-<section class="pie-card">
+<section>
   <h2>Πού πάει το εισόδημα</h2>
   <div class="pie-wrap">
     <div class="pie" id="pie"></div>
