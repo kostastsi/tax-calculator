@@ -79,6 +79,18 @@
   .efka-summary { font-weight: 600; padding: 10px 4px 4px; margin-top: 6px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; }
   .efka-summary .label { color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-size: 12px; }
   .efka-warn { color: #b54708; font-size: 12px; margin-top: 4px; }
+  .pie-wrap { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .pie {
+    width: 220px; height: 220px; border-radius: 50%;
+    background: conic-gradient(#e3e3df 0% 100%);
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .pie-legend { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 260px; }
+  .pie-legend .item { display: grid; grid-template-columns: 14px 1fr auto auto; align-items: center; gap: 10px; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed #ececea; }
+  .pie-legend .swatch { width: 12px; height: 12px; border-radius: 3px; }
+  .pie-legend .amount { font-variant-numeric: tabular-nums; color: var(--text); }
+  .pie-legend .pct { color: var(--muted); width: 56px; text-align: right; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -147,6 +159,14 @@
 <section>
   <h2>Αποτελέσματα</h2>
   <div class="results" id="results"></div>
+</section>
+
+<section>
+  <h2>Πού πάει το εισόδημα</h2>
+  <div class="pie-wrap">
+    <div class="pie" id="pie"></div>
+    <div class="pie-legend" id="pie-legend"></div>
+  </div>
 </section>
 
 <script>
@@ -380,8 +400,42 @@ function recompute() {
     <div class="line net"><span>Καθαρά (μήνας)</span><span>${fmt(netMonthly)}</span></div>
   `;
 
-  document.getElementById("expense-sum-month").textContent = fmt(yearlyExpenses / 12);
-  document.getElementById("expense-sum-year").textContent  = fmt(yearlyExpenses);
+  document.getElementById("expense-sum-month").textContent = fmt(otherExpensesYearly / 12);
+  document.getElementById("expense-sum-year").textContent  = fmt(otherExpensesYearly);
+
+  // ── Pie chart: where does the gross income go? ──
+  // Slices sum to grossIncome (taxable income would hide expenses).
+  const slices = [
+    { label: "Καθαρά",       amount: Math.max(0, netYearly),         color: "#1a7f37" },
+    { label: "Φόρος εισοδ.", amount: tax,                            color: "#b42318" },
+    { label: "Προκαταβολή",  amount: prokatavoli,                    color: "#dc6803" },
+    { label: "ΕΦΚΑ",         amount: efkaYear,                       color: "#2f6feb" },
+    { label: "Λοιπά έξοδα",  amount: otherExpensesYearly,            color: "#7d4ec3" },
+  ];
+  const pieTotal = slices.reduce((s, x) => s + x.amount, 0);
+  const pieEl = document.getElementById("pie");
+  const legendEl = document.getElementById("pie-legend");
+  if (pieTotal <= 0) {
+    pieEl.style.background = "conic-gradient(#e3e3df 0% 100%)";
+    legendEl.innerHTML = `<div class="hint">Συμπληρώστε έσοδα για να εμφανιστεί η κατανομή.</div>`;
+  } else {
+    let acc = 0;
+    const stops = slices.map(s => {
+      const start = (acc / pieTotal) * 100;
+      acc += s.amount;
+      const end = (acc / pieTotal) * 100;
+      return `${s.color} ${start}% ${end}%`;
+    }).join(", ");
+    pieEl.style.background = `conic-gradient(${stops})`;
+    legendEl.innerHTML = slices.map(s => `
+      <div class="item">
+        <div class="swatch" style="background:${s.color}"></div>
+        <div class="label">${s.label}</div>
+        <div class="amount">${fmt(s.amount)}</div>
+        <div class="pct">${(s.amount / pieTotal * 100).toFixed(1)}%</div>
+      </div>
+    `).join("");
+  }
 
   save();
 }
