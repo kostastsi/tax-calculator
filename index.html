@@ -1154,11 +1154,19 @@ function load() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const data = JSON.parse(raw);
+    // Frequency must be one of the two valid strings — anything else is bad data
+    // (e.g., a previous bug where update() coerced it to the number 0).
+    const fixFreq = (f, fallback) =>
+      (f === "monthly" || f === "yearly") ? f : fallback;
+
     if (Array.isArray(data.income)) {
-      // Migration: legacy rows had no `frequency`. Default them to "yearly"
-      // so saved totals (rate × units = annual) keep their original meaning.
-      // New rows from defaults have frequency="monthly" already.
-      state.income = data.income.map(r => ({ frequency: "yearly", ...r }));
+      // Legacy rows had no `frequency`. Default them to "yearly" so saved totals
+      // (rate × units = annual) keep their original meaning. New rows from
+      // defaults have frequency="monthly" already.
+      state.income = data.income.map(r => ({
+        ...r,
+        frequency: fixFreq(r.frequency, "yearly"),
+      }));
     }
     if (Array.isArray(data.expenses)) {
       state.expenses = data.expenses
@@ -1167,7 +1175,7 @@ function load() {
           label:     e.label ?? "",
           amount:    e.amount ?? e.monthly ?? 0,   // legacy 'monthly' → 'amount'
           vat:       e.vat ?? 0,
-          frequency: e.frequency ?? "monthly",     // legacy rows had no frequency; were monthly
+          frequency: fixFreq(e.frequency, "monthly"),
         }));
     }
     if (data.efka) state.efka = { ...state.efka, ...data.efka };
@@ -1400,9 +1408,12 @@ function hidePieTooltip() {
   document.getElementById("pie-tooltip").style.display = "none";
 }
 
+// String fields are stored as-is; everything else is coerced to a number.
+const STRING_FIELDS = new Set(["name", "label", "frequency"]);
+
 function update(kind, i, field, value) {
   const arr = state[kind];
-  arr[i][field] = (field === "name" || field === "label") ? value : (parseFloat(value) || 0);
+  arr[i][field] = STRING_FIELDS.has(field) ? value : (parseFloat(value) || 0);
   recompute();   // no rebuild — focus stays put
 }
 
