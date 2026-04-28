@@ -138,7 +138,7 @@
 <section>
   <h2>Ρυθμίσεις</h2>
   <div class="settings">
-    <label>Έτη δραστηριότητας: <input type="number" id="years" min="0" value="1" oninput="recompute()"></label>
+    <label>Έτη δραστηριότητας: <input type="number" id="years" min="1" value="1" oninput="recompute()"></label>
     <span class="hint" id="years-hint"></span>
     <button class="reset-btn" onclick="resetData()">Επαναφορά προεπιλογών</button>
   </div>
@@ -328,7 +328,7 @@ function recompute() {
     if (el) el.textContent = fmt(r.rate * r.units);
   });
 
-  const years          = parseInt(document.getElementById("years").value) || 0;
+  const years          = Math.max(1, parseInt(document.getElementById("years").value) || 1);
   const grossIncome    = state.income.reduce((s, r) => s + r.rate * r.units, 0);
   document.getElementById("income-sum").textContent = fmt(grossIncome);
 
@@ -359,6 +359,7 @@ function recompute() {
   const taxable        = Math.max(0, grossIncome - yearlyExpenses);
   const tax            = calculateTax(taxable, years);
   const prokatavoli    = calculateProkatavoli(tax, years);
+  const prokatavoliPct = years <= 3 ? "27,5%" : "55%";
   const netYearly      = taxable - tax;
   const netMonthly     = netYearly / 12;
   const totalToPay     = tax + prokatavoli;
@@ -373,7 +374,7 @@ function recompute() {
     <div class="line"><span>Σύνολο εξόδων (έτος)</span><span>−${fmt(yearlyExpenses)}</span></div>
     <div class="line big"><span>Φορολογητέο εισόδημα</span><span>${fmt(taxable)}</span></div>
     <div class="line"><span>Φόρος εισοδήματος</span><span>−${fmt(tax)}</span></div>
-    <div class="line"><span>Προκαταβολή φόρου</span><span>−${fmt(prokatavoli)}</span></div>
+    <div class="line"><span>Προκαταβολή φόρου (${prokatavoliPct})</span><span>−${fmt(prokatavoli)}</span></div>
     <div class="line big"><span>Σύνολο προς εφορία</span><span>${fmt(totalToPay)}</span></div>
     <div class="line net"><span>Καθαρά (έτος)</span><span>${fmt(netYearly)}</span></div>
     <div class="line net"><span>Καθαρά (μήνας)</span><span>${fmt(netMonthly)}</span></div>
