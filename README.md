@@ -121,12 +121,30 @@ Primary sources used to derive the rules:
   https://www.mysolon.gr/
 
 When the law changes, update:
-- `BRACKETS` array (tax brackets)
-- `NEW_FREELANCER_FIRST_BRACKET_RATE` (currently 0.045)
-- `EFKA_CATEGORIES_2026` array (annual EFKA amounts)
-- `calculateProkatavoli` (if rates change)
+- `BRACKETS` array (tax brackets) — manual
+- `NEW_FREELANCER_FIRST_BRACKET_RATE` (currently 0.045) — manual
+- `EFKA_CATEGORIES_2026` array — **auto-updated monthly** by `.github/workflows/update-efka.yml`
+- `calculateProkatavoli` (if rates change) — manual
 
-All four live in the `<script>` block of `index.html`, clearly labeled.
+All live in the `<script>` block of `index.html`, clearly labeled.
+
+## Automated EFKA updates
+
+A GitHub Action runs on the 1st of every month and on manual dispatch:
+
+1. Fetches the official e-EFKA page
+2. Parses the categories table
+3. Validates: 7 expected rows (special + 1–6), totals in plausible range, ascending order
+4. Updates the `EFKA_CATEGORIES_<year>` array in `index.html` between the `EFKA-CATEGORIES-START`/`END` markers
+5. Commits + pushes if values changed (no commit on no-op)
+
+The script (`scripts/update_efka.py`) fails loudly when the page layout breaks rather than writing bad data — the failed Action surfaces as a red X in the repo, which is the signal to inspect manually.
+
+To run it locally:
+```bash
+python3 scripts/update_efka.py            # update if changed
+python3 scripts/update_efka.py --check    # dry-run; exit 1 if changes pending
+```
 
 ---
 

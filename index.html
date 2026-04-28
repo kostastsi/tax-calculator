@@ -231,19 +231,22 @@ const state = {
   efka: { category: "special", customAmount: null },
 };
 
-// e-EFKA contribution categories — values for 2026.
-// Each total = base + 10€ OAED unemployment fund contribution.
+// e-EFKA contribution categories — values updated annually from the official source.
+// Each total = base (pension + healthcare) + 10€ OAED unemployment fund.
 // Source: https://www.e-efka.gov.gr/el/asphalismenoi/me-misthotoi/neo-systhma-asfalistikon-eisforon/neoi-epaggelmaties
-// Note: update values annually — they rise with inflation.
+//
+// === EFKA-CATEGORIES-START === (auto-updated by scripts/update_efka.py — do not edit by hand)
+const EFKA_YEAR = 2026;
 const EFKA_CATEGORIES_2026 = [
   { id: "special", name: "Ειδική (πρώτα 5 έτη)", monthly: 160.46 },
-  { id: "1",       name: "1η",                    monthly: 260.77 },
-  { id: "2",       name: "2η",                    monthly: 310.93 },
-  { id: "3",       name: "3η",                    monthly: 370.63 },
-  { id: "4",       name: "4η",                    monthly: 443.47 },
-  { id: "5",       name: "5η",                    monthly: 529.45 },
-  { id: "6",       name: "6η",                    monthly: 685.87 },
+  { id: "1", name: "1η", monthly: 260.77 },
+  { id: "2", name: "2η", monthly: 310.93 },
+  { id: "3", name: "3η", monthly: 370.63 },
+  { id: "4", name: "4η", monthly: 443.47 },
+  { id: "5", name: "5η", monthly: 529.45 },
+  { id: "6", name: "6η", monthly: 685.87 },
 ];
+// === EFKA-CATEGORIES-END ===
 
 function efkaMonthly() {
   if (state.efka.category === "custom") return state.efka.customAmount || 0;
