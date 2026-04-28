@@ -213,6 +213,14 @@
     background: #fff;
     box-shadow: 0 0 0 4px rgba(125, 108, 224, 0.15);
   }
+  /* Compound VAT cell: select + (optional) custom % input side-by-side */
+  .vat-cell {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .vat-cell select { flex: 1; min-width: 0; }
+  .vat-cell input { flex: 0 0 56px; padding: 11px 8px; }
 
   .net-display {
     color: var(--ink-soft);
@@ -1085,6 +1093,28 @@ function expenseYearlyNet(r) {
   return net * factor;
 }
 
+// VAT preset handling — Greek standard rates:
+//   0% (insurance, bank fees, non-VATable),
+//   6% (medicines, hotels),
+//   13% (most services: accountants, books, food),
+//   24% (default for everything else).
+const VAT_PRESETS = [0, 6, 13, 24];
+function isCustomVat(r) {
+  if (r.useCustomVat != null) return r.useCustomVat;
+  // Legacy rows had no flag → derive from current value
+  return !VAT_PRESETS.includes(parseFloat(r.vat));
+}
+function updateVatPreset(i, value) {
+  if (value === "custom") {
+    state.expenses[i].useCustomVat = true;   // show input, keep current value
+  } else {
+    state.expenses[i].useCustomVat = false;
+    state.expenses[i].vat = parseFloat(value);
+  }
+  renderRows();
+  recompute();
+}
+
 // e-EFKA contribution categories — values updated annually from the official source.
 // Each total = base (pension + healthcare) + 10€ OAED unemployment fund.
 // Source: https://www.e-efka.gov.gr/el/asphalismenoi/me-misthotoi/neo-systhma-asfalistikon-eisforon/neoi-epaggelmaties
@@ -1177,11 +1207,21 @@ function renderRows() {
 
   document.getElementById("expense-rows").innerHTML = state.expenses.map((r, i) => {
     const yearlyNet = expenseYearlyNet(r);
+    const customVat = isCustomVat(r);
     return `
       <div class="row expense">
         <input type="text"   value="${r.label}"     oninput="update('expenses', ${i}, 'label', this.value)" placeholder="π.χ. λογιστής">
         <input type="number" value="${r.amount}"    oninput="update('expenses', ${i}, 'amount', this.value)" step="0.01">
-        <input type="number" value="${r.vat || 0}"  oninput="update('expenses', ${i}, 'vat', this.value)" step="1" min="0">
+        <div class="vat-cell">
+          <select onchange="updateVatPreset(${i}, this.value)">
+            <option value="0"   ${!customVat && parseFloat(r.vat) === 0  ? "selected" : ""}>0%</option>
+            <option value="6"   ${!customVat && parseFloat(r.vat) === 6  ? "selected" : ""}>6%</option>
+            <option value="13"  ${!customVat && parseFloat(r.vat) === 13 ? "selected" : ""}>13%</option>
+            <option value="24"  ${!customVat && parseFloat(r.vat) === 24 ? "selected" : ""}>24%</option>
+            <option value="custom" ${customVat ? "selected" : ""}>Άλλο…</option>
+          </select>
+          ${customVat ? `<input type="number" value="${r.vat || 0}" oninput="update('expenses', ${i}, 'vat', this.value)" step="0.5" min="0" max="100" placeholder="%" title="Προσαρμοσμένο ΦΠΑ %">` : ''}
+        </div>
         <select onchange="update('expenses', ${i}, 'frequency', this.value)">
           <option value="monthly" ${r.frequency === "monthly" ? "selected" : ""}>Ανά μήνα</option>
           <option value="yearly"  ${r.frequency === "yearly"  ? "selected" : ""}>Ανά έτος</option>
