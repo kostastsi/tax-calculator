@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<title>Φόροι Ελ. Επαγγελματία 2026</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --panel: #ffffff;
+    --border: #e3e3df;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #2f6feb;
+    --good: #1a7f37;
+    --bad: #b42318;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 24px;
+    max-width: 880px;
+    margin-inline: auto;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+  }
+  section h2 { font-size: 15px; margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+  .row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .row.expense { grid-template-columns: 2fr 1fr 0.6fr 1fr auto; }
+  .net-display { color: var(--muted); font-size: 13px; text-align: right; padding-right: 4px; }
+  input[type="text"], input[type="number"] {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+    font: inherit; background: #fafaf8;
+  }
+  input:focus { outline: 2px solid var(--accent); outline-offset: -1px; background: #fff; }
+  .total { color: var(--muted); font-size: 13px; text-align: right; padding-right: 4px; }
+  button {
+    border: 1px solid var(--border); background: #fff; padding: 6px 10px;
+    border-radius: 6px; cursor: pointer; font: inherit;
+  }
+  button:hover { background: #f0f0ec; }
+  button.add { color: var(--accent); border-color: #c8d6f5; margin-top: 4px; }
+  button.del { color: var(--bad); padding: 4px 8px; }
+  .settings { display: flex; gap: 16px; align-items: center; }
+  .settings label { font-size: 14px; }
+  .settings input { width: 90px; }
+  .results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+  .results .line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #ececea; }
+  .results .line.big { font-weight: 600; border-bottom: 2px solid var(--text); padding-top: 12px; }
+  .results .line.net { color: var(--good); font-weight: 700; font-size: 17px; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .header-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 4px; padding: 0 4px; }
+  .header-row.expense { grid-template-columns: 2fr 1fr 0.6fr 1fr auto; }
+  .sum-row {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 8px;
+    padding: 10px 4px 4px; margin-top: 6px;
+    border-top: 1px solid var(--border);
+    font-weight: 600; font-size: 14px;
+  }
+  .sum-row.expense { grid-template-columns: 2fr 1fr 0.6fr 1fr auto; }
+  .sum-row.expense .label { grid-column: 1 / 3; }
+  .sum-row .label { color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-size: 12px; align-self: center; }
+  .sum-row.income .label { grid-column: 1 / 4; }
+  .sum-row .amount { text-align: right; padding-right: 4px; }
+  .reset-btn { color: var(--bad); border-color: #f0c7c0; margin-left: 16px; }
+  .reset-btn:hover { background: #fdf3f1; }
+  .efka { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .efka select, .efka input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font: inherit; background: #fafaf8; }
+  .efka label { font-size: 14px; }
+  .efka-summary { font-weight: 600; padding: 10px 4px 4px; margin-top: 6px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; }
+  .efka-summary .label { color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-size: 12px; }
+  .efka-warn { color: #b54708; font-size: 12px; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<h1>Φόροι Ελ. Επαγγελματία 2026</h1>
+<div class="sub">Υπολογισμός καθαρού εισοδήματος — τοπικό, κανένα δεδομένο δεν φεύγει από το browser.</div>
+
+<section>
+  <h2>Έσοδα</h2>
+  <div class="header-row">
+    <div>Πηγή</div><div>€ / ώρα</div><div>Ώρες</div><div>Σύνολο</div><div></div>
+  </div>
+  <div id="income-rows"></div>
+  <div class="sum-row income">
+    <div class="label">Σύνολο εσόδων</div>
+    <div class="amount" id="income-sum">—</div>
+    <div></div>
+  </div>
+  <button class="add" onclick="addIncome()">+ Νέα πηγή</button>
+</section>
+
+<section>
+  <h2>Ασφαλιστικές εισφορές (e-ΕΦΚΑ)</h2>
+  <div class="efka">
+    <label>Κατηγορία:
+      <select id="efka-category" onchange="updateEfkaCategory(this.value)"></select>
+    </label>
+    <label id="efka-custom-label" style="display:none">Ποσό/μήνα (€):
+      <input type="number" id="efka-custom-amount" step="0.01" min="0" oninput="updateEfkaCustom(this.value)">
+    </label>
+    <span class="hint">Τιμές 2026. Συμπεριλαμβάνεται +10€ ΟΑΕΔ.</span>
+  </div>
+  <div id="efka-warn" class="efka-warn"></div>
+  <div class="efka-summary">
+    <span class="label">ΕΦΚΑ (μήνα / έτος)</span>
+    <span><span id="efka-month">—</span> &nbsp;·&nbsp; <span id="efka-year">—</span></span>
+  </div>
+</section>
+
+<section>
+  <h2>Λοιπά έξοδα (μηνιαία)</h2>
+  <div class="header-row expense">
+    <div>Περιγραφή</div><div>€ / μήνα (μικτά)</div><div>ΦΠΑ %</div><div>Εκπιπτόμενο</div><div></div>
+  </div>
+  <div id="expense-rows"></div>
+  <div class="sum-row expense">
+    <div class="label">Σύνολο εκπιπτόμενων (μήνα / έτος)</div>
+    <div></div>
+    <div></div>
+    <div class="amount"><span id="expense-sum-month">—</span> &nbsp;·&nbsp; <span id="expense-sum-year">—</span></div>
+    <div></div>
+  </div>
+  <button class="add" onclick="addExpense()">+ Νέο έξοδο</button>
+  <div class="hint">Π.χ. εισφορές e-ΕΦΚΑ, λογιστής, ενοίκιο επαγγ. χώρου. Αφαιρούνται από το εισόδημα πριν τη φορολόγηση.</div>
+</section>
+
+<section>
+  <h2>Ρυθμίσεις</h2>
+  <div class="settings">
+    <label>Έτη δραστηριότητας: <input type="number" id="years" min="0" value="1" oninput="recompute()"></label>
+    <span class="hint" id="years-hint"></span>
+    <button class="reset-btn" onclick="resetData()">Επαναφορά προεπιλογών</button>
+  </div>
+</section>
+
+<section>
+  <h2>Αποτελέσματα</h2>
+  <div class="results" id="results"></div>
+</section>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// Tax brackets — Greek freelancer 2026
+// Apply each rate ONLY to the portion of income inside that bracket.
+// ─────────────────────────────────────────────────────────────
+const BRACKETS = [
+  { upTo: 10000,    rate: 0.09 },
+  { upTo: 20000,    rate: 0.22 },
+  { upTo: 30000,    rate: 0.28 },
+  { upTo: 40000,    rate: 0.36 },
+  { upTo: Infinity, rate: 0.44 },
+];
+
+// First-3-years rule: the 9% bracket becomes 4.5% (only the first bracket).
+const NEW_FREELANCER_FIRST_BRACKET_RATE = 0.045;
+
+// Prokatavoli (advance tax for next year):
+// 55% normally, 27.5% for new freelancers (first 3 years).
+function calculateProkatavoli(tax, yearsActive) {
+  // First 3 years (πρώτα 3 έτη) → 27.5%, otherwise 55%.
+  const rate = yearsActive <= 3 ? 0.275 : 0.55;
+  return tax * rate;
+}
+
+/**
+ * Calculate Greek freelancer income tax using progressive brackets.
+ *
+ * Iterate BRACKETS. For each bracket, figure out how much of the income
+ * falls inside it (the slice between prevUpper and bracket.upTo, capped by
+ * what's left). Multiply that slice by the bracket's rate. Sum all slices.
+ *
+ * The first bracket (upTo 10000) uses NEW_FREELANCER_FIRST_BRACKET_RATE
+ * instead of bracket.rate when yearsActive <= 3 (first 3 years of activity).
+ *
+ * Reference values for verification:
+ *   calculateTax(10000,    5) → 900.00
+ *   calculateTax(17700.48, 5) → 2594.11   ← matches your handwritten note
+ *   calculateTax(17700.48, 1) → 2144.11   ← same income, new-freelancer discount
+ *   calculateTax(50000,    5) → 11500.00
+ *
+ * @param {number} taxableIncome  Euros after expenses are deducted.
+ * @param {number} yearsActive    Whole years since starting the business.
+ * @returns {number} Tax owed in euros.
+ */
+function calculateTax(taxableIncome, yearsActive) {
+  // TODO ─ YOU IMPLEMENT THIS (≈ 6–10 lines)
+  //
+  // Suggested approach:
+  //   let tax = 0;
+  //   let prevUpper = 0;
+  //   for each bracket in BRACKETS:
+  //     const sliceCap   = bracket.upTo - prevUpper;            // width of this bracket
+  //     const sliceTaxed = Math.min(remaining, sliceCap);       // how much falls in it
+  //     if sliceTaxed <= 0: break;
+  //     pick the right rate (new-freelancer override on the 10000 bracket)
+  //     tax += sliceTaxed * rate;
+  //     prevUpper = bracket.upTo;
+  //   return tax;
+  //
+  // Edge cases to think about:
+  //   - taxableIncome of 0 or negative → return 0
+  //   - taxableIncome exactly on a bracket boundary (e.g. 10000)
+  //   - Infinity bracket: works because Math.min(remaining, Infinity) = remaining
+  return 0;
+}
+
+// ─────────────────────────────────────────────────────────────
+// State + rendering (the boring plumbing)
+// ─────────────────────────────────────────────────────────────
+const STORAGE_KEY = "tax-calc-2026-v1";
+
+const state = {
+  income: [
+    { name: "Κηφισιά",  rate: 370,   units: 16 },
+    { name: "Νέα Μάκρη", rate: 946,   units: 15 },
+  ],
+  expenses: [],
+  efka: { category: "special", customAmount: null },
+};
+
+// e-EFKA contribution categories — values for 2026.
+// Each total = base + 10€ OAED unemployment fund contribution.
+// Source: https://www.e-efka.gov.gr/el/asphalismenoi/me-misthotoi/neo-systhma-asfalistikon-eisforon/neoi-epaggelmaties
+// Note: update values annually — they rise with inflation.
+const EFKA_CATEGORIES_2026 = [
+  { id: "special", name: "Ειδική (πρώτα 5 έτη)", monthly: 160.46 },
+  { id: "1",       name: "1η",                    monthly: 260.77 },
+  { id: "2",       name: "2η",                    monthly: 310.93 },
+  { id: "3",       name: "3η",                    monthly: 370.63 },
+  { id: "4",       name: "4η",                    monthly: 443.47 },
+  { id: "5",       name: "5η",                    monthly: 529.45 },
+  { id: "6",       name: "6η",                    monthly: 685.87 },
+];
+
+function efkaMonthly() {
+  if (state.efka.category === "custom") return state.efka.customAmount || 0;
+  const cat = EFKA_CATEGORIES_2026.find(c => c.id === state.efka.category);
+  return cat ? cat.monthly : 0;
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      income: state.income,
+      expenses: state.expenses,
+      efka: state.efka,
+      years: document.getElementById("years").value,
+    }));
+  } catch (e) { /* storage full or disabled — fail silently */ }
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (Array.isArray(data.income))   state.income   = data.income;
+    if (Array.isArray(data.expenses)) {
+      state.expenses = data.expenses
+        .filter(e => !/^εφκα/i.test((e.label || "").trim()))   // EFKA now lives in its own section
+        .map(e => ({ vat: 0, ...e }));
+    }
+    if (data.efka) state.efka = { ...state.efka, ...data.efka };
+    if (data.years != null) document.getElementById("years").value = data.years;
+  } catch (e) { /* corrupted — keep defaults */ }
+}
+
+function resetData() {
+  if (!confirm("Διαγραφή όλων των δεδομένων και επαναφορά προεπιλογών;")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+function fmt(n) {
+  if (!isFinite(n)) return "—";
+  return n.toLocaleString("el-GR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+}
+
+// Rebuilds the input rows. Only call on add/remove — calling on every keystroke
+// destroys focused inputs and breaks typing.
+function renderRows() {
+  document.getElementById("income-rows").innerHTML = state.income.map((r, i) => `
+    <div class="row">
+      <input type="text"   value="${r.name}"  oninput="update('income', ${i}, 'name', this.value)" placeholder="π.χ. πελάτης Α">
+      <input type="number" value="${r.rate}"  oninput="update('income', ${i}, 'rate', this.value)" step="0.01">
+      <input type="number" value="${r.units}" oninput="update('income', ${i}, 'units', this.value)" step="1">
+      <div class="total" data-total="income-${i}">${fmt(r.rate * r.units)}</div>
+      <button class="del" onclick="delIncome(${i})">×</button>
+    </div>
+  `).join("");
+
+  document.getElementById("expense-rows").innerHTML = state.expenses.map((r, i) => {
+    const net = r.monthly / (1 + (r.vat || 0) / 100);
+    return `
+      <div class="row expense">
+        <input type="text"   value="${r.label}"     oninput="update('expenses', ${i}, 'label', this.value)" placeholder="π.χ. ΕΦΚΑ">
+        <input type="number" value="${r.monthly}"   oninput="update('expenses', ${i}, 'monthly', this.value)" step="0.01">
+        <input type="number" value="${r.vat || 0}"  oninput="update('expenses', ${i}, 'vat', this.value)" step="1" min="0">
+        <div class="net-display" data-total="expense-${i}">${fmt(net)}</div>
+        <button class="del" onclick="delExpense(${i})">×</button>
+      </div>
+    `;
+  }).join("");
+}
+
+// Updates only computed values (per-row totals, results panel, hint).
+// Never touches input DOM, so focus and cursor position survive.
+function recompute() {
+  // Per-row income totals
+  state.income.forEach((r, i) => {
+    const el = document.querySelector(`[data-total="income-${i}"]`);
+    if (el) el.textContent = fmt(r.rate * r.units);
+  });
+
+  const years          = parseInt(document.getElementById("years").value) || 0;
+  const grossIncome    = state.income.reduce((s, r) => s + r.rate * r.units, 0);
+  document.getElementById("income-sum").textContent = fmt(grossIncome);
+
+  // Per-expense deductible net + total
+  const expenseNet = state.expenses.map(r => r.monthly / (1 + (r.vat || 0) / 100));
+  expenseNet.forEach((net, i) => {
+    const el = document.querySelector(`[data-total="expense-${i}"]`);
+    if (el) el.textContent = fmt(net);
+  });
+  const otherExpensesYearly = expenseNet.reduce((s, n) => s + n * 12, 0);
+
+  // EFKA contributions (deductible in full, no VAT)
+  const efkaMonth = efkaMonthly();
+  const efkaYear  = efkaMonth * 12;
+  document.getElementById("efka-month").textContent = fmt(efkaMonth);
+  document.getElementById("efka-year").textContent  = fmt(efkaYear);
+
+  const warnEl = document.getElementById("efka-warn");
+  if (years > 5 && state.efka.category === "special") {
+    warnEl.textContent = "Προσοχή: η ειδική κατηγορία ισχύει μόνο για τα πρώτα 5 έτη. Επιλέξτε κατηγορία 1–6.";
+  } else if (years <= 5 && state.efka.category !== "special" && state.efka.category !== "custom") {
+    warnEl.textContent = "Είστε στα πρώτα 5 έτη — δικαιούστε την ειδική κατηγορία (160,46€).";
+  } else {
+    warnEl.textContent = "";
+  }
+
+  const yearlyExpenses = otherExpensesYearly + efkaYear;
+  const taxable        = Math.max(0, grossIncome - yearlyExpenses);
+  const tax            = calculateTax(taxable, years);
+  const prokatavoli    = calculateProkatavoli(tax, years);
+  const netYearly      = taxable - tax;
+  const netMonthly     = netYearly / 12;
+  const totalToPay     = tax + prokatavoli;
+
+  let hint = "";
+  if (years <= 3) hint = "Νέος επαγγελματίας (πρώτα 3 έτη): 4,5% στα πρώτα 10.000€ + προκαταβολή στο 27,5%.";
+  else            hint = "Κανονικοί συντελεστές, προκαταβολή 55%.";
+  document.getElementById("years-hint").textContent = hint;
+
+  document.getElementById("results").innerHTML = `
+    <div class="line"><span>Σύνολο εσόδων (έτος)</span><span>${fmt(grossIncome)}</span></div>
+    <div class="line"><span>Σύνολο εξόδων (έτος)</span><span>−${fmt(yearlyExpenses)}</span></div>
+    <div class="line big"><span>Φορολογητέο εισόδημα</span><span>${fmt(taxable)}</span></div>
+    <div class="line"><span>Φόρος εισοδήματος</span><span>−${fmt(tax)}</span></div>
+    <div class="line"><span>Προκαταβολή φόρου</span><span>−${fmt(prokatavoli)}</span></div>
+    <div class="line big"><span>Σύνολο προς εφορία</span><span>${fmt(totalToPay)}</span></div>
+    <div class="line net"><span>Καθαρά (έτος)</span><span>${fmt(netYearly)}</span></div>
+    <div class="line net"><span>Καθαρά (μήνας)</span><span>${fmt(netMonthly)}</span></div>
+  `;
+
+  document.getElementById("expense-sum-month").textContent = fmt(yearlyExpenses / 12);
+  document.getElementById("expense-sum-year").textContent  = fmt(yearlyExpenses);
+
+  save();
+}
+
+function update(kind, i, field, value) {
+  const arr = state[kind];
+  arr[i][field] = (field === "name" || field === "label") ? value : (parseFloat(value) || 0);
+  recompute();   // no rebuild — focus stays put
+}
+
+function updateEfkaCategory(value) {
+  state.efka.category = value;
+  document.getElementById("efka-custom-label").style.display = (value === "custom") ? "" : "none";
+  recompute();
+}
+
+function updateEfkaCustom(value) {
+  state.efka.customAmount = parseFloat(value) || 0;
+  recompute();
+}
+
+function renderEfkaDropdown() {
+  const sel = document.getElementById("efka-category");
+  const options = EFKA_CATEGORIES_2026.map(c =>
+    `<option value="${c.id}">${c.name} — ${fmt(c.monthly)}</option>`
+  ).join("") + `<option value="custom">Προσαρμοσμένο…</option>`;
+  sel.innerHTML = options;
+  sel.value = state.efka.category;
+  if (state.efka.category === "custom") {
+    document.getElementById("efka-custom-label").style.display = "";
+    document.getElementById("efka-custom-amount").value = state.efka.customAmount || 0;
+  }
+}
+
+function focusLastRow(containerId) {
+  const rows = document.querySelectorAll(`#${containerId} .row`);
+  rows[rows.length - 1]?.querySelector("input")?.focus();
+}
+
+function addIncome()  { state.income.push({ name: "", rate: 0, units: 0 }); renderRows(); recompute(); focusLastRow("income-rows"); }
+function addExpense() { state.expenses.push({ label: "", monthly: 0 });    renderRows(); recompute(); focusLastRow("expense-rows"); }
+function delIncome(i)  { state.income.splice(i, 1);   renderRows(); recompute(); }
+function delExpense(i) { state.expenses.splice(i, 1); renderRows(); recompute(); }
+
+load();
+renderEfkaDropdown();
+renderRows();
+recompute();
+</script>
+</body>
+</html>
