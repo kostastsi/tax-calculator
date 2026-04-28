@@ -190,12 +190,29 @@
   /* ── Rows ──────────────────────────────────────────────── */
   .row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 0.7fr 1.1fr 1fr auto;
     gap: 10px;
     margin-bottom: 8px;
     align-items: center;
   }
   .row.expense { grid-template-columns: 2fr 1fr 0.6fr 1fr auto; }
+  .row select {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 500;
+    background: var(--panel-soft);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .row select:focus {
+    outline: none;
+    border-color: var(--lilac-deep);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(125, 108, 224, 0.15);
+  }
 
   .net-display {
     color: var(--ink-soft);
@@ -306,7 +323,7 @@
   /* ── Header rows + sum rows ────────────────────────────── */
   .header-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 0.7fr 1.1fr 1fr auto;
     gap: 10px;
     font-size: var(--fs-eyebrow);
     color: var(--muted);
@@ -320,7 +337,7 @@
 
   .sum-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 0.7fr 1.1fr 1fr auto;
     gap: 10px;
     padding: 14px 8px 6px;
     margin-top: 10px;
@@ -338,7 +355,7 @@
     font-weight: var(--fw-bold);
     align-self: center;
   }
-  .sum-row.income .label { grid-column: 1 / 4; }
+  .sum-row.income .label { grid-column: 1 / 5; }
   .sum-row .amount {
     text-align: right;
     padding-right: 6px;
@@ -818,6 +835,7 @@
     .row > input[type="text"] {
       grid-column: 1 / -1;   /* description spans full width on its own line */
     }
+    .row select { grid-column: 1 / -1; }   /* frequency picker also full-width */
     .row .total, .row .net-display { grid-column: 1 / -1; text-align: left; }
     .row button.del { grid-column: 1 / -1; justify-self: end; }
     .header-row, .header-row.expense { display: none; }  /* labels collapse with the grid */
@@ -848,15 +866,16 @@
 <section class="income">
   <h2>Έσοδα</h2>
   <div class="header-row">
-    <div>Πηγή</div><div>€ / ώρα</div><div>Ώρες</div><div>Σύνολο</div><div></div>
+    <div>Πηγή</div><div>€ / ώρα</div><div>Ώρες</div><div>Συχνότητα</div><div>Σύνολο/έτος</div><div></div>
   </div>
   <div id="income-rows"></div>
   <div class="sum-row income">
-    <div class="label">Σύνολο εσόδων</div>
+    <div class="label">Σύνολο εσόδων (έτος)</div>
     <div class="amount" id="income-sum">—</div>
     <div></div>
   </div>
   <button class="add" onclick="addIncome()">+ Νέα πηγή</button>
+  <div class="hint">Όλα τα ποσά ανάγονται σε ετήσιο εισόδημα — ο φόρος υπολογίζεται ετησίως.</div>
 </section>
 
 <section class="efka">
@@ -1010,12 +1029,19 @@ const STORAGE_KEY = "tax-calc-2026-v1";
 
 const state = {
   income: [
-    { name: "Έσοδο 1", rate: 0, units: 0 },
-    { name: "Έσοδο 2", rate: 0, units: 0 },
+    { name: "Έσοδο 1", rate: 0, units: 0, frequency: "monthly" },
+    { name: "Έσοδο 2", rate: 0, units: 0, frequency: "monthly" },
   ],
   expenses: [],
   efka: { category: "special", customAmount: null },
 };
+
+// Convert a single income row to its yearly equivalent.
+// monthly → multiply by 12; yearly → use as-is.
+function streamYearly(r) {
+  const factor = (r.frequency === "monthly") ? 12 : 1;
+  return r.rate * r.units * factor;
+}
 
 // e-EFKA contribution categories — values updated annually from the official source.
 // Each total = base (pension + healthcare) + 10€ OAED unemployment fund.
@@ -1056,7 +1082,12 @@ function load() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const data = JSON.parse(raw);
-    if (Array.isArray(data.income))   state.income   = data.income;
+    if (Array.isArray(data.income)) {
+      // Migration: legacy rows had no `frequency`. Default them to "yearly"
+      // so saved totals (rate × units = annual) keep their original meaning.
+      // New rows from defaults have frequency="monthly" already.
+      state.income = data.income.map(r => ({ frequency: "yearly", ...r }));
+    }
     if (Array.isArray(data.expenses)) {
       state.expenses = data.expenses
         .filter(e => !/^εφκα/i.test((e.label || "").trim()))   // EFKA now lives in its own section
@@ -1088,7 +1119,11 @@ function renderRows() {
       <input type="text"   value="${r.name}"  oninput="update('income', ${i}, 'name', this.value)" placeholder="π.χ. πελάτης Α">
       <input type="number" value="${r.rate}"  oninput="update('income', ${i}, 'rate', this.value)" step="0.01">
       <input type="number" value="${r.units}" oninput="update('income', ${i}, 'units', this.value)" step="1">
-      <div class="total" data-total="income-${i}">${fmt(r.rate * r.units)}</div>
+      <select onchange="update('income', ${i}, 'frequency', this.value)">
+        <option value="monthly" ${r.frequency === "monthly" ? "selected" : ""}>Ανά μήνα</option>
+        <option value="yearly"  ${r.frequency === "yearly"  ? "selected" : ""}>Ανά έτος</option>
+      </select>
+      <div class="total" data-total="income-${i}">${fmt(streamYearly(r))}</div>
       <button class="del" onclick="delIncome(${i})">×</button>
     </div>
   `).join("");
@@ -1110,14 +1145,14 @@ function renderRows() {
 // Updates only computed values (per-row totals, results panel, hint).
 // Never touches input DOM, so focus and cursor position survive.
 function recompute() {
-  // Per-row income totals
+  // Per-row income totals — always shown as YEARLY (rows can be entered as monthly or yearly)
   state.income.forEach((r, i) => {
     const el = document.querySelector(`[data-total="income-${i}"]`);
-    if (el) el.textContent = fmt(r.rate * r.units);
+    if (el) el.textContent = fmt(streamYearly(r));
   });
 
   const years          = Math.max(1, parseInt(document.getElementById("years").value) || 1);
-  const grossIncome    = state.income.reduce((s, r) => s + r.rate * r.units, 0);
+  const grossIncome    = state.income.reduce((s, r) => s + streamYearly(r), 0);
   document.getElementById("income-sum").textContent = fmt(grossIncome);
 
   // Per-expense deductible net + total
@@ -1290,7 +1325,7 @@ function focusLastRow(containerId) {
   rows[rows.length - 1]?.querySelector("input")?.focus();
 }
 
-function addIncome()  { state.income.push({ name: "", rate: 0, units: 0 }); renderRows(); recompute(); focusLastRow("income-rows"); }
+function addIncome()  { state.income.push({ name: "", rate: 0, units: 0, frequency: "monthly" }); renderRows(); recompute(); focusLastRow("income-rows"); }
 function addExpense() { state.expenses.push({ label: "", monthly: 0 });    renderRows(); recompute(); focusLastRow("expense-rows"); }
 function delIncome(i)  { state.income.splice(i, 1);   renderRows(); recompute(); }
 function delExpense(i) { state.expenses.splice(i, 1); renderRows(); recompute(); }
