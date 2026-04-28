@@ -187,32 +187,34 @@ function calculateProkatavoli(tax, yearsActive) {
  *   calculateTax(10000,    5) → 900.00
  *   calculateTax(17700.48, 5) → 2594.11   ← matches your handwritten note
  *   calculateTax(17700.48, 1) → 2144.11   ← same income, new-freelancer discount
- *   calculateTax(50000,    5) → 11500.00
+ *   calculateTax(50000,    5) → 13900.00
  *
  * @param {number} taxableIncome  Euros after expenses are deducted.
  * @param {number} yearsActive    Whole years since starting the business.
  * @returns {number} Tax owed in euros.
  */
 function calculateTax(taxableIncome, yearsActive) {
-  // TODO ─ YOU IMPLEMENT THIS (≈ 6–10 lines)
-  //
-  // Suggested approach:
-  //   let tax = 0;
-  //   let prevUpper = 0;
-  //   for each bracket in BRACKETS:
-  //     const sliceCap   = bracket.upTo - prevUpper;            // width of this bracket
-  //     const sliceTaxed = Math.min(remaining, sliceCap);       // how much falls in it
-  //     if sliceTaxed <= 0: break;
-  //     pick the right rate (new-freelancer override on the 10000 bracket)
-  //     tax += sliceTaxed * rate;
-  //     prevUpper = bracket.upTo;
-  //   return tax;
-  //
-  // Edge cases to think about:
-  //   - taxableIncome of 0 or negative → return 0
-  //   - taxableIncome exactly on a bracket boundary (e.g. 10000)
-  //   - Infinity bracket: works because Math.min(remaining, Infinity) = remaining
-  return 0;
+  if (taxableIncome <= 0) return 0;
+
+  let tax = 0;
+  let remaining = taxableIncome;
+  let prevUpper = 0;
+
+  for (const bracket of BRACKETS) {
+    const sliceWidth = bracket.upTo - prevUpper;
+    const sliceTaxed = Math.min(remaining, sliceWidth);
+    if (sliceTaxed <= 0) break;
+
+    const rate = (bracket.upTo === 10000 && yearsActive <= 3)
+      ? NEW_FREELANCER_FIRST_BRACKET_RATE
+      : bracket.rate;
+
+    tax += sliceTaxed * rate;
+    remaining -= sliceTaxed;
+    prevUpper = bracket.upTo;
+  }
+
+  return tax;
 }
 
 // ─────────────────────────────────────────────────────────────
