@@ -2,33 +2,35 @@
 <html lang="el">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Φόροι Ελ. Επαγγελματία 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Variable Manrope so font-feature-settings + optical sizing behave consistently across weights -->
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     /* Soft modern fintech palette */
-    --cream:        #fdf8f1;   /* page background base */
-    --cream-deep:   #f7ecdb;   /* gradient stop */
-    --peach:        #ffd9c2;   /* income card tint */
-    --mint:         #c9ecd8;   /* net / positive */
-    --mint-deep:    #2f9d6b;   /* net text */
-    --lilac:        #e3dcfb;   /* efka card tint */
-    --lilac-deep:   #7d6ce0;   /* efka accent */
-    --coral:        #ff7e6b;   /* delete / warn */
+    --cream:        #fdf8f1;
+    --cream-deep:   #f7ecdb;
+    --peach:        #ffd9c2;
+    --mint:         #c9ecd8;
+    --mint-deep:    #2f9d6b;
+    --lilac:        #e3dcfb;
+    --lilac-deep:   #7d6ce0;
+    --coral:        #ff7e6b;
     --coral-soft:   #ffd6cf;
-    --butter:       #ffe6a8;   /* expenses card tint */
+    --butter:       #ffe6a8;
     --butter-deep:  #c98a1f;
-    --sky:          #c6e2f7;   /* settings card tint */
+    --sky:          #c6e2f7;
     --sky-deep:     #2f7bd0;
 
     --panel:        #ffffff;
     --panel-soft:   #fffaf3;
-    --ink:          #2a2235;   /* warm near-black */
+    --ink:          #2a2235;
     --ink-soft:     #5a5168;
     --muted:        #8a8197;
-    --line:         #f0e7dc;   /* warm divider */
+    --line:         #f0e7dc;
     --line-strong:  #e3d6c4;
 
     --shadow-sm: 0 1px 2px rgba(82, 60, 40, 0.04), 0 2px 6px rgba(82, 60, 40, 0.05);
@@ -40,13 +42,36 @@
     --radius-lg: 20px;
     --radius-xl: 28px;
 
-    /* JS-referenced palette equivalents (kept for parity with original CSS variables) */
     --bg: var(--cream);
     --border: var(--line);
     --text: var(--ink);
     --accent: var(--lilac-deep);
     --good: var(--mint-deep);
     --bad: var(--coral);
+
+    /* ── TYPE RAMP ──────────────────────────────────────────
+       Coherent ladder of 5 sizes — every text element snaps to one of these.
+       11 → 12 → 13 → 14 → 16 → 20 → 30 (hero number).
+    */
+    --fs-eyebrow:  11px;   /* small-caps section labels, sum row labels */
+    --fs-tertiary: 12px;   /* hints, fine print */
+    --fs-secondary:13px;   /* helper amounts, percentages */
+    --fs-body:     14px;   /* main body, inputs, totals */
+    --fs-lead:     16px;   /* the "big" result line (φορολογητέο, σύνολο προς εφορία) */
+    --fs-h1:       32px;   /* page title */
+    --fs-hero:     30px;   /* the Καθαρά climax number */
+
+    --fw-regular: 500;
+    --fw-medium:  600;
+    --fw-bold:    700;
+    --fw-black:   800;
+
+    /* Greek small caps need TIGHTER spacing than Latin — Greek glyphs are
+       wider, so 0.12em reads as gappy/decorative. 0.06em keeps the small-caps
+       feel without breaking up words like ΑΠΟΤΕΛΕΣΜΑΤΑ or ΡΥΘΜΙΣΕΙΣ. */
+    --ls-eyebrow: 0.06em;
+    --ls-h1:      -0.025em; /* tightened on the big size for refinement */
+    --ls-hero:    -0.02em;  /* the climax number */
   }
 
   * { box-sizing: border-box; }
@@ -66,21 +91,43 @@
       radial-gradient(800px  500px at 50% 110%, #d6f0e1 0%, transparent 60%),
       linear-gradient(180deg, var(--cream) 0%, var(--cream-deep) 100%);
       background-attachment: fixed;
-    font-feature-settings: "ss01", "cv11";
+    /* "tnum" is more reliable than font-variant-numeric across browsers; ss01
+       is a Manrope stylistic set, cv11 is a Latin character variant — Manrope
+       silently ignores cv11 on Greek codepoints, so it cannot affect Greek. */
+    font-feature-settings: "tnum" 1, "ss01" 1, "cv11" 1;
+    font-size: var(--fs-body);
+    line-height: 1.45;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Numbers everywhere line up in columns */
+  .tnum,
+  input[type="number"],
+  .total,
+  .net-display,
+  .amount,
+  .pct,
+  .results .line,
+  .efka-summary {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "ss01" 1, "cv11" 1;
   }
 
   h1 {
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-black);
+    letter-spacing: var(--ls-h1);
+    line-height: 1.1;
     margin: 4px 0 6px;
   }
   .sub {
     color: var(--ink-soft);
-    font-size: 14px;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-regular);
+    line-height: 1.5;
     margin-bottom: 28px;
-    max-width: 640px;
+    max-width: 620px;
   }
 
   /* ── Cards ─────────────────────────────────────────────── */
@@ -94,7 +141,6 @@
     box-shadow: var(--shadow-md);
     overflow: hidden;
   }
-  /* Soft tinted top wash on every card, color varies per section */
   section::before {
     content: "";
     position: absolute;
@@ -107,7 +153,6 @@
   }
   section > * { position: relative; z-index: 1; }
 
-  /* Per-section accent tints */
   section.income    { --card-tint: var(--peach); }
   section.efka      { --card-tint: var(--lilac); }
   section.expenses  { --card-tint: var(--butter); }
@@ -115,16 +160,18 @@
   section.results   { --card-tint: #d8eee3; }
   section.pie-card  { --card-tint: #f3e3d2; }
 
+  /* Section eyebrow — small caps, tightened for Greek */
   section h2 {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-size: 12px;
-    font-weight: 700;
-    margin: 0 0 16px;
+    font-size: var(--fs-eyebrow);
+    font-weight: var(--fw-bold);
+    margin: 0 0 18px;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: var(--ls-eyebrow);
     color: var(--ink-soft);
+    line-height: 1;
   }
   section h2::before {
     content: "";
@@ -152,11 +199,11 @@
 
   .net-display {
     color: var(--ink-soft);
-    font-size: 13px;
+    font-size: var(--fs-secondary);
     text-align: right;
     padding-right: 6px;
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
+    font-weight: var(--fw-medium);
+    white-space: nowrap;
   }
 
   input[type="text"], input[type="number"] {
@@ -165,13 +212,13 @@
     border: 1px solid var(--line-strong);
     border-radius: 12px;
     font: inherit;
-    font-weight: 500;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-regular);
     background: var(--panel-soft);
     color: var(--ink);
     transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
   }
-  input[type="number"] { font-variant-numeric: tabular-nums; }
-  input::placeholder { color: var(--muted); }
+  input::placeholder { color: var(--muted); font-weight: var(--fw-regular); }
   input:focus {
     outline: none;
     border-color: var(--lilac-deep);
@@ -181,11 +228,12 @@
 
   .total {
     color: var(--ink);
-    font-size: 14px;
-    font-weight: 600;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-medium);
     text-align: right;
     padding-right: 6px;
-    font-variant-numeric: tabular-nums;
+    /* Don't let "1.234,56 €" break the € off onto its own line in the cell */
+    white-space: nowrap;
   }
 
   /* ── Buttons ───────────────────────────────────────────── */
@@ -196,8 +244,10 @@
     border-radius: 999px;
     cursor: pointer;
     font: inherit;
-    font-weight: 600;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-medium);
     color: var(--ink);
+    letter-spacing: 0;
     transition: transform .08s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
     box-shadow: var(--shadow-sm);
   }
@@ -210,6 +260,7 @@
     border-color: transparent;
     margin-top: 12px;
     padding: 10px 18px;
+    font-weight: var(--fw-bold);
     box-shadow: 0 6px 16px rgba(106, 89, 214, 0.30);
   }
   button.add:hover { filter: brightness(1.05); }
@@ -222,6 +273,7 @@
     border-radius: 999px;
     line-height: 1;
     font-size: 16px;
+    font-weight: var(--fw-medium);
     box-shadow: none;
   }
   button.del:hover { background: #fff3f0; }
@@ -233,7 +285,14 @@
     align-items: center;
     flex-wrap: wrap;
   }
-  .settings label { font-size: 14px; font-weight: 600; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 10px; }
+  .settings label {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-medium);
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
   .settings input { width: 100px; }
 
   .reset-btn {
@@ -249,13 +308,13 @@
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr auto;
     gap: 10px;
-    font-size: 11px;
+    font-size: var(--fs-eyebrow);
     color: var(--muted);
     margin-bottom: 8px;
     padding: 0 6px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
+    letter-spacing: var(--ls-eyebrow);
+    font-weight: var(--fw-bold);
   }
   .header-row.expense { grid-template-columns: 2fr 1fr 0.6fr 1fr auto; }
 
@@ -266,25 +325,26 @@
     padding: 14px 8px 6px;
     margin-top: 10px;
     border-top: 1px dashed var(--line-strong);
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-body);
   }
   .sum-row.expense { grid-template-columns: 2fr 1fr 0.6fr 1fr auto; }
   .sum-row.expense .label { grid-column: 1 / 3; }
   .sum-row .label {
     color: var(--ink-soft);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-size: 11px;
-    font-weight: 700;
+    letter-spacing: var(--ls-eyebrow);
+    font-size: var(--fs-eyebrow);
+    font-weight: var(--fw-bold);
     align-self: center;
   }
   .sum-row.income .label { grid-column: 1 / 4; }
   .sum-row .amount {
     text-align: right;
     padding-right: 6px;
-    font-variant-numeric: tabular-nums;
     color: var(--ink);
+    font-weight: var(--fw-bold);
+    white-space: nowrap;
   }
 
   /* ── EFKA ──────────────────────────────────────────────── */
@@ -292,13 +352,19 @@
     display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
     margin-bottom: 10px;
   }
-  .efka label { font-size: 14px; font-weight: 600; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 10px; }
+  .efka label {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-medium);
+    color: var(--ink-soft);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
   .efka select, .efka input {
     padding: 11px 13px;
     border: 1px solid var(--line-strong);
     border-radius: 12px;
     font: inherit;
-    font-weight: 500;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-regular);
     background: var(--panel-soft);
     color: var(--ink);
   }
@@ -317,37 +383,40 @@
     box-shadow: 0 0 0 4px rgba(125, 108, 224, 0.15);
   }
   .efka-summary {
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     padding: 14px 8px 6px;
     margin-top: 10px;
     border-top: 1px dashed var(--line-strong);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-variant-numeric: tabular-nums;
+    font-size: var(--fs-body);
   }
+  .efka-summary > span:last-child { white-space: nowrap; }
   .efka-summary .label {
     color: var(--ink-soft);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-size: 11px;
-    font-weight: 700;
+    letter-spacing: var(--ls-eyebrow);
+    font-size: var(--fs-eyebrow);
+    font-weight: var(--fw-bold);
   }
   .efka-warn {
     color: #a8530b;
     background: #fff3df;
     border: 1px solid #f3d9a3;
     border-radius: 12px;
-    font-size: 13px;
+    font-size: var(--fs-secondary);
+    line-height: 1.5;
     padding: 10px 14px;
     margin-top: 8px;
-    font-weight: 600;
+    font-weight: var(--fw-medium);
   }
   .efka-warn:empty { display: none; }
 
   .hint {
     color: var(--ink-soft);
-    font-size: 12px;
+    font-size: var(--fs-tertiary);
+    font-weight: var(--fw-regular);
     margin-top: 10px;
     line-height: 1.5;
   }
@@ -361,140 +430,316 @@
   .results .line {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
+    gap: 12px;
     padding: 10px 4px;
     border-bottom: 1px dashed var(--line-strong);
-    font-size: 14px;
-    font-variant-numeric: tabular-nums;
+    font-size: var(--fs-body);
   }
-  .results .line span:first-child { color: var(--ink-soft); font-weight: 500; }
-  .results .line span:last-child  { color: var(--ink); font-weight: 600; white-space: nowrap; }
+  .results .line span:first-child {
+    color: var(--ink-soft);
+    font-weight: var(--fw-medium);
+  }
+  .results .line span:last-child {
+    color: var(--ink);
+    font-weight: var(--fw-medium);
+    white-space: nowrap;
+  }
+
+  /* "Big" intermediate lines — φορολογητέο εισόδημα, σύνολο προς εφορία.
+     Bumped slightly but kept clearly subordinate to the .net climax. */
   .results .line.big {
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     border-bottom: 2px solid var(--ink);
     padding-top: 14px;
-    font-size: 15px;
+    font-size: var(--fs-lead);
   }
-  .results .line.big span:first-child { color: var(--ink); font-weight: 700; }
+  .results .line.big span:first-child {
+    color: var(--ink);
+    font-weight: var(--fw-bold);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .results .line.big span:last-child {
+    font-weight: var(--fw-bold);
+  }
 
-  /* The hero "καθαρά" treatment — celebratory, framed, warm green */
+  /* ── The hero "Καθαρά" treatment ─────────────────────────
+     Stacked layout: small-caps eyebrow on top, oversized tabular number below.
+     Both year + month cards span full width as a stacked pair so they read
+     as ONE unit, the climax of the page. The € sign is glued to the number. */
   .results .line.net {
     background: linear-gradient(135deg, #e6f6ec 0%, #d2efde 100%);
     border: 1px solid #b9e3c9;
     border-radius: 16px;
-    padding: 16px 18px;
-    margin-top: 10px;
+    padding: 18px 22px;
+    margin-top: 12px;
     color: var(--mint-deep);
-    font-weight: 800;
-    font-size: 18px;
-    box-shadow: 0 6px 18px rgba(47, 157, 107, 0.10);
+    box-shadow: 0 8px 22px rgba(47, 157, 107, 0.12);
     grid-column: span 1;
-  }
-  .results .line.net span:first-child {
-    color: #1f7a52;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 11px;
-  }
-  .results .line.net span:last-child {
-    color: var(--mint-deep);
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-  }
-  .results .line.net {
+    /* Switch from row layout (label left / value right) to stacked
+       eyebrow-over-amount, which lets the number be much bigger without
+       fighting horizontal space. */
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
+    border-bottom: none;
+  }
+  .results .line.net span:first-child {
+    color: #1f7a52;
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-eyebrow);
+    font-size: var(--fs-eyebrow);
+    line-height: 1;
+  }
+  .results .line.net span:last-child {
+    color: var(--mint-deep);
+    font-size: var(--fs-hero);
+    font-weight: var(--fw-black);
+    letter-spacing: var(--ls-hero);
+    line-height: 1.05;
+    /* € stays married to the number — never wraps to its own line */
+    white-space: nowrap;
   }
 
-  /* ── Pie chart (the centerpiece) ───────────────────────── */
-  .pie-wrap {
-    display: flex;
-    gap: 36px;
+  /* ── Pie chart — refined hero treatment ────────────────── */
+  .pie-card .pie-wrap {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 44px;
     align-items: center;
-    flex-wrap: wrap;
-    padding: 8px 4px 4px;
+    padding: 16px 4px 8px;
+  }
+  .pie-stage {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+  }
+  .pie-stage::before {
+    content: "";
+    position: absolute;
+    inset: -22px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 55%,
+      rgba(255, 213, 175, 0.45) 0%,
+      rgba(255, 213, 175, 0.18) 35%,
+      transparent 65%);
+    filter: blur(6px);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .pie-stage::after {
+    content: "";
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: conic-gradient(from 215deg,
+      rgba(255,255,255,0.85) 0deg,
+      rgba(255,255,255,0) 80deg,
+      rgba(82, 60, 40, 0.10) 180deg,
+      rgba(255,255,255,0) 280deg,
+      rgba(255,255,255,0.85) 360deg);
+    -webkit-mask: radial-gradient(circle, transparent 158px, #000 158px, #000 160px, transparent 160px);
+            mask: radial-gradient(circle, transparent 158px, #000 158px, #000 160px, transparent 160px);
+    pointer-events: none;
+    z-index: 2;
   }
   .pie {
-    --pie-size: 280px;
+    --pie-size: 320px;
     width: var(--pie-size);
     height: var(--pie-size);
     border-radius: 50%;
     background: conic-gradient(#e3e3df 0% 100%);
-    flex-shrink: 0;
     position: relative;
-    /* Soft drop shadow + inner highlight */
     box-shadow:
-      0 18px 40px rgba(82, 60, 40, 0.18),
-      0 6px 16px rgba(82, 60, 40, 0.10),
-      inset 0 0 0 1px rgba(255,255,255,0.5);
-    isolation: isolate;
+      0 24px 50px rgba(82, 60, 40, 0.18),
+      0 8px 22px rgba(82, 60, 40, 0.10),
+      inset 0 0 0 1px rgba(255,255,255,0.55);
+    animation: pieReveal 900ms cubic-bezier(0.22, 0.85, 0.32, 1) both;
+    transform-origin: center;
+    z-index: 1;
+    cursor: crosshair;
   }
-  /* Inner donut hole: a clean cream disc that turns the pie into a donut */
-  .pie::after {
-    content: "";
-    position: absolute;
-    inset: 22%;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fdf6ea 70%, #f5e9d4 100%);
-    box-shadow:
-      inset 0 4px 10px rgba(82, 60, 40, 0.08),
-      0 1px 2px rgba(255,255,255,0.6);
+  @keyframes pieReveal {
+    0%   { clip-path: circle(0% at 50% 50%); opacity: 0; transform: scale(0.92); }
+    60%  {                                   opacity: 1; }
+    100% { clip-path: circle(52% at 50% 50%);             transform: scale(1); }
   }
-  /* Subtle highlight on the rim */
   .pie::before {
     content: "";
     position: absolute;
-    inset: -1px;
+    inset: 0;
     border-radius: 50%;
-    background: conic-gradient(from 90deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.25));
     pointer-events: none;
+    background:
+      conic-gradient(from 90deg,
+        rgba(255,255,255,0.45),
+        rgba(255,255,255,0) 22%,
+        rgba(255,255,255,0) 78%,
+        rgba(255,255,255,0.30));
     mix-blend-mode: overlay;
+    z-index: 1;
+  }
+  .pie::after {
+    content: "";
+    position: absolute;
+    inset: 21%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 28%, #ffffff 0%, #fdf6ea 65%, #f5e9d4 100%);
+    box-shadow:
+      inset 0 6px 14px rgba(82, 60, 40, 0.10),
+      inset 0 -2px 6px rgba(255,255,255,0.7),
+      0 1px 2px rgba(255,255,255,0.6);
+    z-index: 2;
+  }
+  .pie-center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    z-index: 3;
+    text-align: center;
+  }
+  .pie-center .center-inner {
+    width: 58%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 6px;
+    padding: 6px 14px;
+  }
+  .pie-center .eyebrow {
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 700;
+    opacity: 0.75;
+  }
+  .pie-center .mark {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.05;
+    margin-top: 2px;
+  }
+  .pie-center .mark em {
+    font-style: normal;
+    color: #c97f3a;
+    font-weight: 800;
+  }
+  .pie-center .rule {
+    width: 38px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--line-strong) 50%, transparent 100%);
+    margin: 6px auto 4px;
+  }
+  .pie-center .meta {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
   }
 
+  /* Legend — financial-table feel */
   .pie-legend {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0;
     flex: 1;
     min-width: 280px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: linear-gradient(180deg, #fffaf2 0%, #fff7ec 100%);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
   }
+  .pie-legend-header {
+    display: grid;
+    grid-template-columns: 14px 1fr 110px 64px;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    font-weight: 700;
+    color: var(--muted);
+    background: rgba(255,255,255,0.55);
+    border-bottom: 1px solid var(--line);
+  }
+  .pie-legend-header .h-amount,
+  .pie-legend-header .h-pct { text-align: right; }
   .pie-legend .item {
     display: grid;
-    grid-template-columns: 14px 1fr auto auto;
+    grid-template-columns: 14px 1fr 110px 64px;
     align-items: center;
     gap: 12px;
     font-size: 14px;
-    padding: 10px 12px;
-    border-bottom: 1px dashed var(--line-strong);
-    border-radius: 10px;
-    transition: background .15s ease;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    transition: background .18s ease, transform .18s ease;
+    position: relative;
   }
-  .pie-legend .item:hover { background: rgba(255,255,255,0.55); }
+  .pie-legend .item:hover {
+    background: rgba(255,255,255,0.85);
+    transform: translateX(2px);
+  }
+  .pie-legend .item::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: transparent;
+    transition: background .18s ease;
+    border-radius: 0 2px 2px 0;
+  }
+  .pie-legend .item:hover::before {
+    background: linear-gradient(180deg, rgba(125, 108, 224, 0.5), rgba(125, 108, 224, 0.2));
+  }
   .pie-legend .item:last-child { border-bottom: none; }
   .pie-legend .swatch {
     width: 14px; height: 14px;
     border-radius: 5px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(255,255,255,0.4);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.10),
+      inset 0 0 0 1px rgba(255,255,255,0.45),
+      inset 0 -2px 4px rgba(0,0,0,0.10);
   }
   .pie-legend .label { color: var(--ink); font-weight: 600; }
   .pie-legend .amount {
     font-variant-numeric: tabular-nums;
     color: var(--ink);
-    font-weight: 600;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
   }
   .pie-legend .pct {
-    color: var(--ink-soft);
-    width: 60px;
+    color: var(--ink);
     text-align: right;
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
-    font-size: 13px;
+    font-weight: 700;
+    font-size: 12px;
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 4px 8px;
+    min-width: 56px;
+    box-shadow: 0 1px 2px rgba(82, 60, 40, 0.04);
   }
-  .pie { cursor: crosshair; }
+
+  /* ── Pie hover tooltip ─────────────────────────────────── */
   #pie-tooltip {
     position: fixed;
     display: none;
@@ -509,49 +754,89 @@
     z-index: 100;
     min-width: 140px;
     transform: translate(-50%, calc(-100% - 14px));
-    animation: ttFade 0.12s ease-out;
   }
   #pie-tooltip::after {
     content: "";
     position: absolute;
-    bottom: -6px;
-    left: 50%;
+    bottom: -6px; left: 50%;
     transform: translateX(-50%) rotate(45deg);
     width: 12px; height: 12px;
     background: var(--ink);
     border-radius: 2px;
   }
   #pie-tooltip .tt-name {
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 10px;
-    color: rgba(255,255,255,0.7);
-    font-weight: 700;
-    margin-bottom: 4px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 10px; color: rgba(255,255,255,0.7);
+    font-weight: 700; margin-bottom: 4px;
   }
   #pie-tooltip .tt-amount {
-    font-size: 16px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
+    font-size: 16px; font-weight: 700;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
   }
   #pie-tooltip .tt-pct {
-    font-size: 12px;
-    color: rgba(255,255,255,0.85);
-    font-variant-numeric: tabular-nums;
-    margin-top: 2px;
+    font-size: 12px; color: rgba(255,255,255,0.85);
+    font-variant-numeric: tabular-nums; margin-top: 2px;
   }
-  @keyframes ttFade { from { opacity: 0; transform: translate(-50%, calc(-100% - 8px)); } to { opacity: 1; transform: translate(-50%, calc(-100% - 14px)); } }
-  @media (prefers-reduced-motion: reduce) {
-    #pie-tooltip { animation: none; }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 720px) {
+    .pie-card .pie-wrap {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 24px;
+    }
+    .pie-legend { width: 100%; }
   }
 
   @media (max-width: 640px) {
     body { padding: 20px 14px 60px; }
-    h1 { font-size: 24px; }
+    h1 { font-size: 26px; }
     section { padding: 18px 16px; border-radius: var(--radius-md); }
     .results { grid-template-columns: 1fr; }
-    .pie { --pie-size: 220px; }
+    .results .line.net span:last-child { font-size: 26px; }
+    .pie { --pie-size: 240px; }
+    .pie-stage { width: 240px; height: 240px; }
+    .pie-stage::after { width: 240px; height: 240px;
+      -webkit-mask: radial-gradient(circle, transparent 118px, #000 118px, #000 120px, transparent 120px);
+              mask: radial-gradient(circle, transparent 118px, #000 118px, #000 120px, transparent 120px);
+    }
+    .pie-center .mark { font-size: 18px; }
+    .pie-legend-header,
+    .pie-legend .item {
+      grid-template-columns: 14px 1fr 90px 56px;
+      gap: 10px;
+      padding: 10px 12px;
+    }
+    /* Stack the input rows vertically — 5-column grid is unusable on phones */
+    .row {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .row.expense {
+      grid-template-columns: 1fr 1fr;
+    }
+    .row > input[type="text"] {
+      grid-column: 1 / -1;   /* description spans full width on its own line */
+    }
+    .row .total, .row .net-display { grid-column: 1 / -1; text-align: left; }
+    .row button.del { grid-column: 1 / -1; justify-self: end; }
+    .header-row, .header-row.expense { display: none; }  /* labels collapse with the grid */
+    .sum-row, .sum-row.expense {
+      grid-template-columns: 1fr;
+      gap: 4px;
+      text-align: left;
+    }
+    .sum-row .label, .sum-row .amount {
+      grid-column: 1 / -1;
+      text-align: left;
+    }
+    .pie { cursor: pointer; }   /* tap-friendly cursor on touch */
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pie { animation: none; }
+    .pie-legend .item { transition: none; }
+    #pie-tooltip { animation: none; }
   }
 </style>
 </head>
@@ -626,10 +911,28 @@
 <section class="pie-card">
   <h2>Πού πάει το εισόδημα</h2>
   <div class="pie-wrap">
-    <div class="pie" id="pie"></div>
-    <div class="pie-legend" id="pie-legend"></div>
-    <div id="pie-tooltip"></div>
+    <div class="pie-stage">
+      <div class="pie" id="pie"></div>
+      <div class="pie-center" aria-hidden="true">
+        <div class="center-inner">
+          <div class="eyebrow">Κατανομή</div>
+          <div class="mark">Ετήσιο<br><em>εισόδημα</em></div>
+          <div class="rule"></div>
+          <div class="meta">2026</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="pie-legend-header">
+        <div></div>
+        <div>Κατηγορία</div>
+        <div class="h-amount">Ποσό (έτος)</div>
+        <div class="h-pct">Μερίδιο</div>
+      </div>
+      <div class="pie-legend" id="pie-legend"></div>
+    </div>
   </div>
+  <div id="pie-tooltip"></div>
 </section>
 
 <script>
@@ -772,7 +1075,8 @@ function resetData() {
 
 function fmt(n) {
   if (!isFinite(n)) return "—";
-  //   = non-breaking space — keeps "1.234,56 €" together on the same line
+  // Non-breaking space between number and € — guarantees the symbol stays
+  // glued to the digits even if some other CSS lets the cell wrap.
   return n.toLocaleString("el-GR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 }
 
@@ -901,37 +1205,32 @@ function recompute() {
     `).join("");
   }
 
-  // Stash the slice data so the hover handler can map mouse position → slice
+  // Stash slice data for the hover handler (mouse/touch)
   pieHoverState.slices = slices;
   pieHoverState.total  = pieTotal;
 
   save();
 }
 
-// ── Pie hover tooltip ─────────────────────────────────────
-// Conic-gradient is one DOM node, so we compute which slice the mouse is over
-// from the cursor's angle relative to the pie's center. (12 o'clock = 0,
-// clockwise.) Donut hole and outside-the-circle are no-ops.
+// ── Pie hover/tap tooltip ─────────────────────────────────
+// One conic-gradient = one DOM node, so we map cursor angle → slice instead
+// of attaching listeners per slice. Works for mouse AND touch.
 const pieHoverState = { slices: [], total: 0 };
 
-function handlePieHover(e) {
+function showPieTooltipFor(clientX, clientY, target) {
   if (pieHoverState.total <= 0 || pieHoverState.slices.length === 0) return;
-
-  const rect = e.currentTarget.getBoundingClientRect();
+  const rect = target.getBoundingClientRect();
   const cx = rect.left + rect.width / 2;
   const cy = rect.top  + rect.height / 2;
-  const dx = e.clientX - cx;
-  const dy = e.clientY - cy;
+  const dx = clientX - cx;
+  const dy = clientY - cy;
   const r  = Math.hypot(dx, dy);
-
   const outerR = rect.width / 2;
-  const innerR = outerR * 0.56; // donut hole inset is 22%
+  const innerR = outerR * 0.58;   // donut hole = 21% inset → ~0.58 of radius
   if (r < innerR || r > outerR) { hidePieTooltip(); return; }
 
-  // atan2(dx, -dy) gives angle from 12 o'clock, clockwise, in radians [-π, π]
   const angle = (Math.atan2(dx, -dy) + 2 * Math.PI) % (2 * Math.PI);
   const fraction = angle / (2 * Math.PI);
-
   let acc = 0;
   let hit = null;
   for (const s of pieHoverState.slices) {
@@ -948,8 +1247,8 @@ function handlePieHover(e) {
     <div class="tt-pct">${(hit.amount / pieHoverState.total * 100).toFixed(1)}% του εισοδήματος</div>
   `;
   tt.style.display = "block";
-  tt.style.left = e.clientX + "px";
-  tt.style.top  = e.clientY + "px";
+  tt.style.left = clientX + "px";
+  tt.style.top  = clientY + "px";
 }
 
 function hidePieTooltip() {
@@ -1001,10 +1300,24 @@ renderEfkaDropdown();
 renderRows();
 recompute();
 
-// Pie hover wiring (one-time setup; pie DOM exists by now)
-const pieEl = document.getElementById("pie");
-pieEl.addEventListener("mousemove", handlePieHover);
-pieEl.addEventListener("mouseleave", hidePieTooltip);
+// Pie hover/tap wiring (one-time setup)
+{
+  const el = document.getElementById("pie");
+  el.addEventListener("mousemove", (e) => showPieTooltipFor(e.clientX, e.clientY, el));
+  el.addEventListener("mouseleave", hidePieTooltip);
+  el.addEventListener("touchstart", (e) => {
+    const t = e.touches[0];
+    if (t) showPieTooltipFor(t.clientX, t.clientY, el);
+  }, { passive: true });
+  el.addEventListener("touchmove", (e) => {
+    const t = e.touches[0];
+    if (t) showPieTooltipFor(t.clientX, t.clientY, el);
+  }, { passive: true });
+  // Hide tooltip on tap outside the pie
+  document.addEventListener("touchstart", (e) => {
+    if (!el.contains(e.target)) hidePieTooltip();
+  }, { passive: true });
+}
 </script>
 </body>
 </html>
